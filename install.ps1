@@ -2,6 +2,8 @@
 # Winget Installation Script for Core Packages
 # ============================================
 
+$ErrorActionPreference = "Stop"
+
 # Ensure script runs as Administrator
 if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     Write-Warning "Please run this script as Administrator!"
@@ -16,7 +18,8 @@ $packages = @(
     @{ Id = "JanDeDobbeleer.OhMyPosh"; Name = "Oh My Posh" },
     @{ Id = "Git.Git"; Name = "Git" },
     @{ Id = "junegunn.fzf"; Name = "fzf" },
-    @{ Id = "ajeetdsouza.zoxide"; Name = "zoxide" }
+    @{ Id = "ajeetdsouza.zoxide"; Name = "zoxide" },
+    @{ Id = "Python.Python.3.11"; Name = "Python 3" }
 )
 
 # Function to check if a package is installed via winget
@@ -48,40 +51,6 @@ foreach ($pkg in $packages) {
 }
 
 Write-Host "✅ All packages processed." -ForegroundColor Green
-
-# -------------------------------
-# Remove existing Python installations and install latest stable Python
-# -------------------------------
-Write-Host "`nChecking for existing Python installations..." -ForegroundColor Cyan
-
-# Get all Python packages known to winget
-$pythonPackages = winget list --id Python.Python* -s winget | Select-String "Python"
-
-if ($pythonPackages) {
-    Write-Host "Found existing Python installations. Uninstalling..." -ForegroundColor Yellow
-    foreach ($pkg in $pythonPackages) {
-        # Extract the package ID from winget output
-        $pkgId = ($pkg -split '\s+')[0]
-        try {
-            Write-Host "Uninstalling $pkgId..." -ForegroundColor Yellow
-            winget uninstall --id $pkgId --silent --accept-source-agreements --accept-package-agreements -h
-        } catch {
-            # Use ${} to safely delimit variables inside the string
-            Write-Warning "Failed to uninstall ${pkgId}: ${_}"
-        }
-    }
-} else {
-    Write-Host "No existing Python installations found." -ForegroundColor Green
-}
-
-# Install latest stable Python
-Write-Host "`nInstalling latest stable Python via winget..." -ForegroundColor Cyan
-try {
-    winget install --id Python.Python.3 --silent --accept-source-agreements --accept-package-agreements -h --force
-    Write-Host "Python installed successfully." -ForegroundColor Green
-} catch {
-    Write-Warning "Failed to install Python: ${_}"
-}
 
 
 # Install Fira Code Nerd Font via Oh My Posh
@@ -123,48 +92,6 @@ try {
     Write-Warning "Failed to enable WSL: $_"
 }
 
-# Get the current script directory
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-
-# Source paths in your repo folder
-$sourceProfile = Join-Path $scriptDir "powershell_settings.ps1"
-$sourceThemeDir = Join-Path $scriptDir "Themes"
-$sourceWTConfig = Join-Path $scriptDir "windows_terminal_settings.json"
-
-# Destination paths
-$destProfile = $PROFILE
-$destThemeDir = "$env:USERPROFILE\Documents\PowerShell\Themes"
-$destWTConfig = "$env:LOCALAPPDATA\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json"
-
-# Ensure theme directory exists
-if (-not (Test-Path $destThemeDir)) {
-    New-Item -ItemType Directory -Path $destThemeDir -Force | Out-Null
-}
-
-# Symlink PowerShell profile
-if (Test-Path $destProfile) {
-    Write-Host "Existing profile detected, backing it up..."
-    Rename-Item -Path $destProfile -NewName ($destProfile + ".backup") -Force
-}
-New-Item -ItemType SymbolicLink -Path $destProfile -Target $sourceProfile -Force
-Write-Host "Symlink created for PowerShell profile."
-
-# Symlink Themes folder
-if (Test-Path $destThemeDir) {
-    Write-Host "Existing Themes folder detected, backing it up..."
-    Rename-Item -Path $destThemeDir -NewName ($destThemeDir + ".backup") -Force
-}
-New-Item -ItemType SymbolicLink -Path $destThemeDir -Target $sourceThemeDir -Force
-Write-Host "Symlink created for Themes folder."
-
-# Symlink Windows Terminal settings
-if (Test-Path $destWTConfig) {
-    Write-Host "Existing Windows Terminal config detected, backing it up..."
-    Rename-Item -Path $destWTConfig -NewName ($destWTConfig + ".backup") -Force
-}
-New-Item -ItemType SymbolicLink -Path $destWTConfig -Target $sourceWTConfig -Force
-Write-Host "Symlink created for Windows Terminal settings.json."
-
 # -------------------------------
 # Ensure zoxide folder is in User PATH
 # -------------------------------
@@ -190,5 +117,33 @@ function Ensure-ZoxideInPath {
 }
 # Call the function after installing zoxide
 Ensure-ZoxideInPath
+
+
+# -------------------------------
+# Create Symlinks with dotbot
+# -------------------------------
+# Reload PowerShell session to ensure environment updates
+Write-Host "`nReloading PowerShell session to apply updated PATHs and modules..." -ForegroundColor Cyan
+. $PROFILE
+
+$CONFIG = "windows.conf.yaml"
+$DOTBOT_DIR = "dotbot"
+
+$DOTBOT_BIN = "bin/dotbot"
+$BASEDIR = $PSScriptRoot
+
+Set-Location $BASEDIR
+git -C $DOTBOT_DIR submodule sync --quiet --recursive
+git submodule update --init --recursive $DOTBOT_DIR
+
+foreach ($PYTHON in ('python', 'python3', 'python2')) {
+    # Python redirects to Microsoft Store in Windows 10 when not installed
+    if (& { $ErrorActionPreference = "SilentlyContinue"
+            ![string]::IsNullOrEmpty((&$PYTHON -V))
+            $ErrorActionPreference = "Stop" }) {
+        &$PYTHON $(Join-Path $BASEDIR -ChildPath $DOTBOT_DIR | Join-Path -ChildPath $DOTBOT_BIN) -d $BASEDIR -c $CONFIG $Args
+        return
+    }
+}
 
 Write-Host "`nSetup complete! You need to restart your PC for changes to take effect."

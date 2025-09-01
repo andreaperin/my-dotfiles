@@ -6,7 +6,7 @@
 # Prompt (Oh My Posh)
 # ------------------------------------------------------------
 # Loads your custom Oh My Posh theme for a modern PowerShell prompt
-$themePath = Join-Path "$env:USERPROFILE\Documents\PowerShell\Themes" "custom.omp.json"
+$themePath = Join-Path "$HOME\themes" "custom.omp.json"
 oh-my-posh init pwsh --config $themePath | Invoke-Expression
 
 

@@ -1,0 +1,7 @@
+[user]
+    name = Andrea Perin
+    mail = andrea.perin1992@gmail.com
+[core]
+    editor = vim
+[init]
+    defaultBranch = main

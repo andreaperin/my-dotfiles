@@ -1,0 +1,24 @@
+- defaults:
+    link:
+      relink: true
+      create: true
+
+- clean:
+    [
+      "~",
+      "~/Documents/WindowsPowerShell",
+      "~/Documents/PowerShell",
+      "~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState"
+    ]
+
+- link:
+    ~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1: pwsh/Microsoft.PowerShell_profile.ps1
+    ~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1: pwsh/Microsoft.PowerShell_profile.ps1
+    # ~/.vim: vim
+    # ~/.vimrc: vim/vimrc
+    # ~/.latexmkrc: latex/latexmkrc
+    ~/themes: pwsh/themes
+    ~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json: windows-terminal/windows_terminal_settings.json
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
