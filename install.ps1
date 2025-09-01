@@ -19,7 +19,9 @@ $packages = @(
     @{ Id = "Git.Git"; Name = "Git" },
     @{ Id = "junegunn.fzf"; Name = "fzf" },
     @{ Id = "ajeetdsouza.zoxide"; Name = "zoxide" },
-    @{ Id = "Python.Python.3.11"; Name = "Python 3" }
+    @{ Id = "Python.Python.3.11"; Name = "Python 3" },
+    @{ Id = "JuliaLang.Juliaup"; Name = "Julia (juliaup)" },
+    @{ Id = "Vim.Vim"; Name = "Vim" }
 )
 
 # Function to check if a package is installed via winget
@@ -47,6 +49,19 @@ foreach ($pkg in $packages) {
         winget install --id $pkg.Id --silent --accept-source-agreements --accept-package-agreements -h
     } else {
         Write-Host "$($pkg.Name) is already installed, skipping..." -ForegroundColor Gray
+    }
+}
+
+# Remove any desktop shortcuts created by Winget installs
+$desktopPath = [Environment]::GetFolderPath("Desktop")
+Write-Host "`nRemoving all desktop shortcuts (.lnk) added by Winget..." -ForegroundColor Cyan
+
+Get-ChildItem -Path $desktopPath -Filter *.lnk -File | ForEach-Object {
+    try {
+        Write-Host "Deleting shortcut: $($_.Name)" -ForegroundColor Yellow
+        Remove-Item $_.FullName -Force
+    } catch {
+        Write-Warning "Failed to delete shortcut $($_.Name): $_"
     }
 }
 

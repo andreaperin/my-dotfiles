@@ -8,7 +8,8 @@
       "~",
       "~/Documents/WindowsPowerShell",
       "~/Documents/PowerShell",
-      "~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState"
+      "~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState",
+      "~/.julia/config"
     ]
 
 - link:
@@ -19,6 +20,9 @@
     # ~/.latexmkrc: latex/latexmkrc
     ~/themes: pwsh/themes
     ~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json: windows-terminal/windows_terminal_settings.json
+    ~/.julia/config/startup.jl: julia/startup.jl
+    ~/.vim: vim
+    ~/.vimrc: vim/vimrc
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
