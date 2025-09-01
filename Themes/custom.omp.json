@@ -1,0 +1,85 @@
+{
+    "$schema": "https://raw.githubusercontent.com/JanDeDobbeleer/oh-my-posh/main/themes/schema.json",
+    "blocks": [
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "segments": [
+                {
+                    "type": "root",
+                    "style": "powerline",
+                    "foreground": "#7a2516",
+                    "template": " "
+                },
+                {
+                    "foreground": "#77E4F7",
+                    "properties": {
+                        "style": "full"
+                    },
+                    "style": "plain",
+                    "template": "{{ .Path }} ",
+                    "type": "path"
+                },
+                {
+                    "foreground": "#FFE700",
+                    "style": "plain",
+                    "template": "{{ .HEAD }}",
+                    "type": "git"
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "right",
+            "segments": [
+                {
+                    "type": "python",
+                    "style": "powerline",
+                    "properties": {
+                        "display_mode": "environment",
+                        "fetch_virtual_env": true,
+                        "home_enabled": true
+                    },
+                    "foreground": "#2314a3",
+                    "template": "  {{ .Full }} "
+                },
+                {
+                    "type": "julia",
+                    "style": "powerline",
+                    "foreground": "#d11da4",
+                    "template": "  {{ .Full }} ",
+                    "properties": {
+                        "threshold": 500,
+                        "style": "austin",
+                        "always_enabled": false
+                    }
+                },
+                {
+                    "type": "executiontime",
+                    "style": "powerline",
+                    "foreground": "#77E4F7",
+                    "template": " <#fefefe></> {{ .FormattedMs }} ",
+                    "properties": {
+                        "threshold": 500,
+                        "style": "austin",
+                        "always_enabled": false
+                    }
+                }
+            ]
+        },
+        {
+            "type": "prompt",
+            "alignment": "left",
+            "newline": true,
+            "segments": [
+                {
+                    "foreground": "#43D426",
+                    "style": "plain",
+                    "template": "\u276f ",
+                    "type": "text"
+                }
+            ]
+        }
+    ],
+    "version": 6
+}
