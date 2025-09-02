@@ -1,0 +1,16 @@
+voronkovich/gitignore.plugin.zsh
+
+chrissicool/zsh-256color
+joel-porquet/zsh-dircolors-solarized
+
+ohmyzsh/ohmyzsh path:plugins/git
+
+zsh-users/zsh-history-substring-search
+zsh-users/zsh-autosuggestions
+
+${ZDOTDIR}/plugins/weather
+${ZDOTDIR}/plugins/update
+
+spaceship-prompt/spaceship-prompt kind:fpath
+
+zdharma-continuum/fast-syntax-highlighting kind:defer
