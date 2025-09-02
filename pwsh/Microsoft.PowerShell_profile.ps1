@@ -16,7 +16,7 @@ oh-my-posh init pwsh --config $themePath | Invoke-Expression
 # PSReadLine provides rich command-line editing and history
 if (Get-Module -ListAvailable PSReadLine) {
     Import-Module PSReadLine | Out-Null
-    if ($PSVersionTable.PSVersion.Major -ge 6) {
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
         Set-PSReadLineOption -PredictionSource History
     } else {
         Set-PSReadLineOption -HistorySearchCursorMovesToEnd
@@ -47,7 +47,6 @@ if ((Get-Command fzf.exe -ErrorAction SilentlyContinue) -and (Get-Module -ListAv
 # fzf environment configuration
 $env:FZF_COMPLETION_TRIGGER='~~'
 $env:FZF_DEFAULT_OPTS='--multi --height=80% --layout=reverse-list --border=double --info=inline'
-
 
 # ------------------------------------------------------------
 # zoxide (Smarter cd)
@@ -98,7 +97,6 @@ function la {
         Format-Table Mode, LastWriteTime, Length, Name
 }
 
-
 # ------------------------------------------------------------
 # Git Ignore Helper (gi)
 # ------------------------------------------------------------
@@ -128,13 +126,15 @@ function gi {
 }
 
 # ------------------------------------------------------------
-# Reload Alias
+# Reload Alias – Only for PowerShell Core
 # ------------------------------------------------------------
-# Quickly reloads the profile and clears the screen
-# Usage: reload
-function reload {
-    Clear-Host
-    if (Test-Path $PROFILE) { . $PROFILE }
+if ($PSVersionTable.PSEdition -eq 'Core') {
+    function reload {
+        Clear-Host
+        if (Test-Path $PROFILE) { . $PROFILE }
+    }
+} else {
+    Write-Host "Skipping 'reload' function: only available in PowerShell Core." -ForegroundColor Yellow
 }
 
 # ------------------------------------------------------------
