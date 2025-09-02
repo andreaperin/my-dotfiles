@@ -65,7 +65,7 @@ Get-ChildItem -Path $desktopPath -Filter *.lnk -File | ForEach-Object {
     }
 }
 
-Write-Host "✅ All packages processed." -ForegroundColor Green
+Write-Host "All packages processed." -ForegroundColor Green
 
 
 # Install Fira Code Nerd Font via Oh My Posh
