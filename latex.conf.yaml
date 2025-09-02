@@ -1,11 +1,11 @@
 - defaults:
-      link:
-              relink: true
+    link:
+      relink: true
 
 - clean: ["~"]
 
 - link:
-      ~/.latexmkrc: latex/latexmkrc
+    ~/.latexmkrc: latex/latexmkrc
 
 - shell:
-      - [git submodule update --init --recursive, Installing submodules]
+    - [git submodule update --init --recursive, Installing submodules]
