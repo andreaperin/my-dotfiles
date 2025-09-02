@@ -1,9 +1,11 @@
 {
     "$help": "https://aka.ms/terminal-documentation",
     "$schema": "https://aka.ms/terminal-profiles-schema",
-    "actions": [
+    "actions": 
+    [
         {
-            "command": {
+            "command": 
+            {
                 "action": "copy",
                 "singleLine": false
             },
@@ -18,7 +20,8 @@
             "id": "User.find"
         },
         {
-            "command": {
+            "command": 
+            {
                 "action": "splitPane",
                 "split": "auto",
                 "splitMode": "duplicate"
@@ -31,7 +34,8 @@
     "copyOnSelect": false,
     "defaultProfile": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
     "disableAnimations": true,
-    "keybindings": [
+    "keybindings": 
+    [
         {
             "id": "User.copy.644BA8F2",
             "keys": "ctrl+c"
@@ -49,20 +53,25 @@
             "keys": "alt+shift+d"
         }
     ],
-    "newTabMenu": [
+    "newTabMenu": 
+    [
         {
             "type": "remainingProfiles"
         }
     ],
-    "profiles": {
-        "defaults": {
+    "profiles": 
+    {
+        "defaults": 
+        {
             "colorScheme": "Monokai Pro (Filter Octagon)",
             "elevate": false,
-            "font": {
+            "font": 
+            {
                 "face": "FiraCode Nerd Font Mono"
             }
         },
-        "list": [
+        "list": 
+        [
             {
                 "guid": "{574e775e-4f2a-5b96-ac1e-a2962a402336}",
                 "hidden": false,
@@ -79,7 +88,7 @@
             },
             {
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-                "hidden": false,
+                "hidden": true,
                 "name": "Windows PowerShell"
             },
             {
@@ -89,12 +98,6 @@
                 "source": "Windows.Terminal.Azure"
             },
             {
-                "guid": "{e4a12686-4614-5d98-83af-53a2c66f729c}",
-                "hidden": true,
-                "name": "Julia",
-                "source": "JuliaComputingInc.Julia_b0ra4bp6jsp6c"
-            },
-            {
                 "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
                 "hidden": true,
                 "name": "Git Bash",
@@ -102,7 +105,8 @@
             }
         ]
     },
-    "schemes": [
+    "schemes": 
+    [
         {
             "background": "#282A3A",
             "black": "#000000",
@@ -128,5 +132,6 @@
         }
     ],
     "showTabsInTitlebar": true,
+    "themes": [],
     "useAcrylicInTabRow": true
 }

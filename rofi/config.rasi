@@ -1,0 +1,9 @@
+configuration {
+    modi: "drun";
+    font: "Fira Code 10";
+    icon-theme: "Papirus";
+    show-icons: true;
+    drun-match-fields: "name,generic,exec";
+}
+
+@theme "solarized_alternate"

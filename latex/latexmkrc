@@ -1,0 +1,7 @@
+$pdf_mode = 4;
+
+set_tex_cmds("--shell-escape --synctex=1 %O %S");
+
+$bibtex_use = 2;
+
+$biber = "biber --validate-datamodel %O %S";

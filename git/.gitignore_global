@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+
+# Vim / Emacs
+*~
+*.swp
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/

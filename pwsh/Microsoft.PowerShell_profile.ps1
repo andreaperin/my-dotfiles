@@ -6,7 +6,7 @@
 # Prompt (Oh My Posh)
 # ------------------------------------------------------------
 # Loads your custom Oh My Posh theme for a modern PowerShell prompt
-$themePath = Join-Path "$env:USERPROFILE\Documents\PowerShell\Themes" "custom.omp.json"
+$themePath = Join-Path "$HOME\themes" "custom.omp.json"
 oh-my-posh init pwsh --config $themePath | Invoke-Expression
 
 
@@ -14,30 +14,39 @@ oh-my-posh init pwsh --config $themePath | Invoke-Expression
 # Core Enhancements
 # ------------------------------------------------------------
 # PSReadLine provides rich command-line editing and history
-Import-Module PSReadLine | Out-Null
-Set-PSReadlineOption -PredictionSource History
+if (Get-Module -ListAvailable PSReadLine) {
+    Import-Module PSReadLine | Out-Null
+    if ($PSVersionTable.PSVersion.Major -ge 7) {
+        Set-PSReadLineOption -PredictionSource History
+    } else {
+        Set-PSReadLineOption -HistorySearchCursorMovesToEnd
+    }
+    Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+}
+
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 # Fancy icons in directory listings (like `ls --color`)
-Import-Module Terminal-Icons | Out-Null
+if (Get-Module -ListAvailable Terminal-Icons) {
+    Import-Module Terminal-Icons | Out-Null
+}
 
 # ------------------------------------------------------------
 # fzf (Fuzzy Finder) Integration
 # ------------------------------------------------------------
 # Provides fuzzy search for files, directories, and command history
-if (Get-Command fzf.exe -ErrorAction SilentlyContinue) {
+if ((Get-Command fzf.exe -ErrorAction SilentlyContinue) -and (Get-Module -ListAvailable PSFzf)) {
     Import-Module PSFzf -ErrorAction SilentlyContinue
-    # Keybindings:
-    #   Ctrl+T → fuzzy-find files
-    #   Ctrl+R → fuzzy-search command history
-    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' `
-                    -PSReadlineChordReverseHistory 'Ctrl+r'
+    if (Get-Command Set-PsFzfOption -ErrorAction SilentlyContinue) {
+        Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' `
+                        -PSReadlineChordReverseHistory 'Ctrl+r'
+    }
 }
+
 
 # fzf environment configuration
 $env:FZF_COMPLETION_TRIGGER='~~'
 $env:FZF_DEFAULT_OPTS='--multi --height=80% --layout=reverse-list --border=double --info=inline'
-
 
 # ------------------------------------------------------------
 # zoxide (Smarter cd)
@@ -88,7 +97,6 @@ function la {
         Format-Table Mode, LastWriteTime, Length, Name
 }
 
-
 # ------------------------------------------------------------
 # Git Ignore Helper (gi)
 # ------------------------------------------------------------
@@ -118,13 +126,15 @@ function gi {
 }
 
 # ------------------------------------------------------------
-# Reload Alias
+# Reload Alias – Only for PowerShell Core
 # ------------------------------------------------------------
-# Quickly reloads the profile and clears the screen
-# Usage: reload
-function reload {
-    Clear-Host
-    . $PROFILE
+if ($PSVersionTable.PSEdition -eq 'Core') {
+    function reload {
+        Clear-Host
+        if (Test-Path $PROFILE) { . $PROFILE }
+    }
+} else {
+    Write-Host "Skipping 'reload' function: only available in PowerShell Core." -ForegroundColor Yellow
 }
 
 # ------------------------------------------------------------
@@ -133,10 +143,10 @@ function reload {
 # Updates all packages installed via winget
 # Usage: update
 function update {
-    Write-Host "📦 Checking for updates..." -ForegroundColor Cyan
+    Write-Host "Checking for updates..." -ForegroundColor Cyan
     winget upgrade --all --include-unknown
 
-    Write-Host "🧹 Cleaning desktop shortcuts..." -ForegroundColor Yellow
+    Write-Host "Cleaning desktop shortcuts..." -ForegroundColor Yellow
     $desktops = @(
         [Environment]::GetFolderPath("Desktop"),                  # Current user Desktop
         [Environment]::GetFolderPath("CommonDesktopDirectory")    # Public Desktop (all users)
@@ -148,5 +158,5 @@ function update {
         }
     }
 
-    Write-Host "✅ Updates applied and desktop cleaned." -ForegroundColor Green
+    Write-Host "Updates applied and desktop cleaned." -ForegroundColor Green
 }
