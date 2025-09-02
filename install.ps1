@@ -175,4 +175,8 @@ foreach ($PYTHON in ('python', 'python3', 'python2')) {
     }
 }
 
+
+# Add vim as default editor for git (Windows uses the vim version that comes with git bash)
+git config --global core.editor "'C:/Program Files/Vim/vim91/vim.exe'"
+
 Write-Host "`nSetup complete! You need to restart your PC for changes to take effect."
