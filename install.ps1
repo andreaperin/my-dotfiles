@@ -139,7 +139,13 @@ Ensure-ZoxideInPath
 # -------------------------------
 # Reload PowerShell session to ensure environment updates
 Write-Host "`nReloading PowerShell session to apply updated PATHs and modules..." -ForegroundColor Cyan
-. $PROFILE
+
+if (Test-Path $PROFILE) {
+    . $PROFILE
+    Write-Host "PowerShell profile reloaded successfully." -ForegroundColor Green
+} else {
+    Write-Warning "PowerShell profile not found at $PROFILE. Skipping reload."
+}
 
 $CONFIG = "windows.conf.yaml"
 $DOTBOT_DIR = "dotbot"
