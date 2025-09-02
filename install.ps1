@@ -138,14 +138,21 @@ Ensure-ZoxideInPath
 # -------------------------------
 # Create Symlinks with dotbot
 # -------------------------------
-# Reload PowerShell session to ensure environment updates
-Write-Host "`nReloading PowerShell session to apply updated PATHs and modules..." -ForegroundColor Cyan
+# # Reload PowerShell session to ensure environment updates
+# Write-Host "`nReloading PowerShell session to apply updated PATHs and modules..." -ForegroundColor Cyan
 
-if (Test-Path $PROFILE) {
-    . $PROFILE
-    Write-Host "PowerShell profile reloaded successfully." -ForegroundColor Green
-} else {
-    Write-Warning "PowerShell profile not found at $PROFILE. Skipping reload."
+# if (Test-Path $PROFILE) {
+#     . $PROFILE
+#     Write-Host "PowerShell profile reloaded successfully." -ForegroundColor Green
+# } else {
+#     Write-Warning "PowerShell profile not found at $PROFILE. Skipping reload."
+# }
+
+# removing default windows terminal settings
+$terminalSettings = "$HOME/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json"
+if (Test-Path $terminalSettings) {
+    Remove-Item $terminalSettings -Force
+    Write-Host "Removed existing Windows Terminal settings.json" -ForegroundColor Green
 }
 
 $CONFIG = "windows.conf.yaml"
