@@ -79,7 +79,7 @@
             },
             {
                 "guid": "{61c54bbd-c2c6-5271-96e7-009a87ff44bf}",
-                "hidden": false,
+                "hidden": true,
                 "name": "Windows PowerShell"
             },
             {
@@ -87,12 +87,6 @@
                 "hidden": true,
                 "name": "Azure Cloud Shell",
                 "source": "Windows.Terminal.Azure"
-            },
-            {
-                "guid": "{e4a12686-4614-5d98-83af-53a2c66f729c}",
-                "hidden": true,
-                "name": "Julia",
-                "source": "JuliaComputingInc.Julia_b0ra4bp6jsp6c"
             },
             {
                 "guid": "{2ece5bfe-50ed-5f3a-ab87-5cd4baafed2b}",
@@ -128,5 +122,6 @@
         }
     ],
     "showTabsInTitlebar": true,
+    "themes": [],
     "useAcrylicInTabRow": true
 }
