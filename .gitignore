@@ -29,3 +29,5 @@ $RECYCLE.BIN/
 
 # End of https://www.toptal.com/developers/gitignore/api/windows
 
+# Directory that creates after :PlugInstall in vim
+vim/plugged/
