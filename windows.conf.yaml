@@ -15,14 +15,13 @@
 - link:
     ~/Documents/WindowsPowerShell/Microsoft.PowerShell_profile.ps1: pwsh/Microsoft.PowerShell_profile.ps1
     ~/Documents/PowerShell/Microsoft.PowerShell_profile.ps1: pwsh/Microsoft.PowerShell_profile.ps1
-    # ~/.vim: vim
-    # ~/.vimrc: vim/vimrc
-    # ~/.latexmkrc: latex/latexmkrc
-    ~/themes: pwsh/themes
+   ~/themes: pwsh/themes
     ~/AppData/Local/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json: windows-terminal/windows_terminal_settings.json
     ~/.julia/config/startup.jl: julia/startup.jl
     ~/.vim: vim
     ~/.vimrc: vim/vimrc
-
+    ~/.latexmkrc: latex/latexmkrc
+    ~/.gitconfig: git/.gitconfig
+    ~/.gitignore_global: git/.gitignore_global
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
