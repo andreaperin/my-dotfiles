@@ -1,2 +1,86 @@
+" -----------------------------
+" Bootstrap vim-plug if missing
+" -----------------------------
+if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | q
+endif
+
+" -----------------------------
+" Plugins
+" -----------------------------
+call plug#begin('~/.vim/plugged')
+
+" VimTeX for LaTeX editing
+Plug 'itchyny/lightline.vim'                " Better status line
+Plug 'lervag/vimtex'                        " Latex for vim
+" Plug 'rhysd/vim-grammarous'                 " Grammar checker
+Plug 'sainnhe/sonokai'                      " Theme
+Plug 'JuliaEditorSupport/julia-vim'         " Julia for vim
+Plug 'ntpeters/vim-better-whitespace'       " Better white spaces
+" Plug 'scrooloose/nerdtree'
+" Plug 'Xuyuanp/nerdtree-git-plugin'
+" Plug 'airblade/vim-gitgutter'
+call plug#end()
+
+" -----------------------------
+" General Settings
+" -----------------------------
+syntax enable                           " Enable syntax highlighting
+filetype plugin indent on               " Enable filetype detection + indentation
+set nocompatible                        " Better Vim experience
+set hidden                              " Allow buffer switching without saving
 set number
 set relativenumber
+set scrolloff=9999                      " Keep cursor away from screen edges
+set backspace=indent,eol,start
+
+" Tabs & Indentation
+set tabstop=4
+set shiftwidth=4
+set expandtab
+
+" Search
+set incsearch
+set hlsearch
+
+" -----------------------------
+" Theme Configuration
+" -----------------------------
+let g:sonokai_style = 'andromeda'
+let g:sonokai_better_performance = 1
+colorscheme sonokai                     " set the colorscheme
+set termguicolors
+" -----------------------------
+" Better-WhiteSpaces Configuration
+" -----------------------------
+let g:better_whitespace_enabled=1       " highlight withe spaces
+let g:strip_whitespace_on_save=1        " auto remove withe spaces on saving
+" Re-apply autocmd in case another plugin clears it
+augroup BetterWhitespace
+    autocmd!
+    autocmd BufWritePre * StripWhitespace
+augroup END
+" -----------------------------
+" Lightline status configuration
+" -----------------------------
+set laststatus=2
+" -----------------------------
+" VimTeX Configuration
+" -----------------------------
+" Enable grammarous only in LaTeX files
+" autocmd FileType tex,plaintex,latex nnoremap <buffer> <leader>g :GrammarousCheck<CR>
+autocmd FileType tex,plaintex,latex setlocal spell spelllang=en_us
+
+let g:vimtex_view_method = 'skim'           " Use Skim as PDF viewer
+let g:vimtex_view_skim_sync = 1             " Enable forward/inverse search
+let g:vimtex_view_skim_activate = 1         " Activate Skim on compile/view
+let g:vimtex_compiler_method = 'latexmk'    " Use latexmk as compiler
+let g:vimtex_compiler_latexmk = {
+            \ 'build_dir' : '',
+            \ 'callback' : 1,
+            \ 'continuous' : 1,
+            \ 'executable' : 'latexmk',
+            \ 'options' : ['-pdf', '-shell-escape', '-verbose', '-file-line-error', '-synctex=1', '-interaction=nonstopmode'],
+            \}
