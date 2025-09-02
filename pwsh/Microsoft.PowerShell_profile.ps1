@@ -14,25 +14,35 @@ oh-my-posh init pwsh --config $themePath | Invoke-Expression
 # Core Enhancements
 # ------------------------------------------------------------
 # PSReadLine provides rich command-line editing and history
-Import-Module PSReadLine | Out-Null
-Set-PSReadlineOption -PredictionSource History
+if (Get-Module -ListAvailable PSReadLine) {
+    Import-Module PSReadLine | Out-Null
+    if ($PSVersionTable.PSVersion.Major -ge 6) {
+        Set-PSReadLineOption -PredictionSource History
+    } else {
+        Set-PSReadLineOption -HistorySearchCursorMovesToEnd
+    }
+    Set-PSReadLineKeyHandler -Key Tab -Function MenuComplete
+}
+
 Set-PSReadlineKeyHandler -Key Tab -Function MenuComplete
 
 # Fancy icons in directory listings (like `ls --color`)
-Import-Module Terminal-Icons | Out-Null
+if (Get-Module -ListAvailable Terminal-Icons) {
+    Import-Module Terminal-Icons | Out-Null
+}
 
 # ------------------------------------------------------------
 # fzf (Fuzzy Finder) Integration
 # ------------------------------------------------------------
 # Provides fuzzy search for files, directories, and command history
-if (Get-Command fzf.exe -ErrorAction SilentlyContinue) {
+if ((Get-Command fzf.exe -ErrorAction SilentlyContinue) -and (Get-Module -ListAvailable PSFzf)) {
     Import-Module PSFzf -ErrorAction SilentlyContinue
-    # Keybindings:
-    #   Ctrl+T → fuzzy-find files
-    #   Ctrl+R → fuzzy-search command history
-    Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' `
-                    -PSReadlineChordReverseHistory 'Ctrl+r'
+    if (Get-Command Set-PsFzfOption -ErrorAction SilentlyContinue) {
+        Set-PsFzfOption -PSReadlineChordProvider 'Ctrl+t' `
+                        -PSReadlineChordReverseHistory 'Ctrl+r'
+    }
 }
+
 
 # fzf environment configuration
 $env:FZF_COMPLETION_TRIGGER='~~'
@@ -124,7 +134,7 @@ function gi {
 # Usage: reload
 function reload {
     Clear-Host
-    . $PROFILE
+    if (Test-Path $PROFILE) { . $PROFILE }
 }
 
 # ------------------------------------------------------------
@@ -133,10 +143,10 @@ function reload {
 # Updates all packages installed via winget
 # Usage: update
 function update {
-    Write-Host "📦 Checking for updates..." -ForegroundColor Cyan
+    Write-Host "Checking for updates..." -ForegroundColor Cyan
     winget upgrade --all --include-unknown
 
-    Write-Host "🧹 Cleaning desktop shortcuts..." -ForegroundColor Yellow
+    Write-Host "Cleaning desktop shortcuts..." -ForegroundColor Yellow
     $desktops = @(
         [Environment]::GetFolderPath("Desktop"),                  # Current user Desktop
         [Environment]::GetFolderPath("CommonDesktopDirectory")    # Public Desktop (all users)
@@ -148,5 +158,5 @@ function update {
         }
     }
 
-    Write-Host "✅ Updates applied and desktop cleaned." -ForegroundColor Green
+    Write-Host "Updates applied and desktop cleaned." -ForegroundColor Green
 }
