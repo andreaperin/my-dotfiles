@@ -70,7 +70,8 @@ Write-Host "All packages processed." -ForegroundColor Green
 
 # Install Fira Code Nerd Font via Oh My Posh
 Write-Host "`nInstalling Fira Code Nerd Font via Oh My Posh..."
-oh-my-posh font install FiraCode
+oh-my-posh font install FiraCode *> $null
+Write-Host "Fira Code installed." -ForegroundColor Green
 
 # Install PowerShell modules
 Write-Host "`nInstalling required PowerShell modules (PSReadLine, Terminal-Icons, PSFzf)..."
