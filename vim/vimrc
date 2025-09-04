@@ -1,18 +1,20 @@
 " -----------------------------
 " Bootstrap vim-plug if missing
 " -----------------------------
-if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | q
+if has('win32')
+  silent !iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni $HOME/vimfiles/autoload/plug.vim -Force
+else
+  if empty(glob('~/.vim/autoload/plug.vim'))
+    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+  endif
 endif
 
 " -----------------------------
 " Plugins
 " -----------------------------
 call plug#begin('~/.vim/plugged')
-
-" VimTeX for LaTeX editing
 Plug 'itchyny/lightline.vim'                " Better status line
 Plug 'lervag/vimtex'                        " Latex for vim
 " Plug 'rhysd/vim-grammarous'                 " Grammar checker
@@ -35,6 +37,7 @@ set number
 set relativenumber
 set scrolloff=9999                      " Keep cursor away from screen edges
 set backspace=indent,eol,start
+set nobackup                            " Disable automatic backup file '~'
 
 " Tabs & Indentation
 set tabstop=4
@@ -52,6 +55,7 @@ let g:sonokai_style = 'andromeda'
 let g:sonokai_better_performance = 1
 colorscheme sonokai                     " set the colorscheme
 set termguicolors
+
 " -----------------------------
 " Better-WhiteSpaces Configuration
 " -----------------------------
@@ -62,10 +66,12 @@ augroup BetterWhitespace
     autocmd!
     autocmd BufWritePre * StripWhitespace
 augroup END
+            \
 " -----------------------------
 " Lightline status configuration
 " -----------------------------
 set laststatus=2
+
 " -----------------------------
 " VimTeX Configuration
 " -----------------------------
