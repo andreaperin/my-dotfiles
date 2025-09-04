@@ -8,6 +8,7 @@ ohmyzsh/ohmyzsh path:plugins/git
 zsh-users/zsh-history-substring-search
 zsh-users/zsh-autosuggestions
 
+${ZDOTDIR}/plugins/juliaup
 ${ZDOTDIR}/plugins/weather
 ${ZDOTDIR}/plugins/update
 
