@@ -1,7 +1,5 @@
 # ~/.zshrc
 
-unmask 022
-
 # install zplug if not yet installed
 if [[ ! -d ${ZDOTDIR:-~}/.antidote ]]; then
     git clone --depth=1 https://github.com/mattmc3/antidote.git ${ZDOTDIR:-~}/.antidote
