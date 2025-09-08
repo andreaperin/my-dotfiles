@@ -31,3 +31,8 @@ $RECYCLE.BIN/
 
 # Directory that creates after :PlugInstall in vim
 vim/plugged/
+vim/.netrwhist
+vim/autoload/
+zsh/.zsh_plugins.zsh
+zsh/.zcompdump
+zsh/.antidote
