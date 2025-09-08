@@ -59,3 +59,22 @@ bindkey    "^[3;5~"    delete-char
 # reload configurations
 alias reload="exec ${SHELL} -l"
 
+# ------------------------
+# ZOXIDE
+# ------------------------
+# Initialize zoxide for smarter directory jumping
+eval "$(zoxide init zsh)"
+
+
+# ------------------------
+# FZF
+# ------------------------
+# Set up fzf key bindings and fuzzy completion
+source <(fzf --zsh)
+# CTRL-t	    Fuzzy find all files and subdirectories of the working directory, and output the selection to STDOUT.
+# ALT-c	        Fuzzy find all subdirectories of the working directory, and run the command “cd” with the output as argument.
+# CTRL-r	    Fuzzy find through your shell history, and output the selection to STDOUT.
+
+# fzf default-like style with reverse layout and preview
+# Open in tmux popup if on tmux, otherwise use --height mode
+export FZF_DEFAULT_OPTS='--height 40% --tmux bottom,40% --layout reverse --border top --style default --preview 'fzf.preview.sh{}''
