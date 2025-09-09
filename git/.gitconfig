@@ -1,5 +1,6 @@
 [user]
     name = Andrea Perin
-    email = andrea.perin.1992@gmail.com
 [init]
     defaultBranch = main
+[core]
+	excludesfile = /home/perin/.gitignore_global
