@@ -1,0 +1,11 @@
+theme = Monokai Pro Octagon
+font-family = Fira Code Nerd Font Mono
+
+window-decoration = false
+window-theme = ghostty
+
+# Transparency
+background-opacity = 1.0
+
+auto-update = download
+auto-update-channel = tip
