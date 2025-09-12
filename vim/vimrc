@@ -2,28 +2,32 @@
 " Bootstrap vim-plug if missing
 " -----------------------------
 if has('win32')
-  silent !iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni $HOME/vimfiles/autoload/plug.vim -Force
+    silent !iwr -useb https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim | ni $HOME/vimfiles/autoload/plug.vim -Force
 else
-  if empty(glob('~/.vim/autoload/plug.vim'))
-    silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
-      \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-    autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
-  endif
+    if empty(glob('~/.vim/autoload/plug.vim'))
+        silent !curl -fLo ~/.vim/autoload/plug.vim --create-dirs
+                    \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+        autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+    endif
 endif
 
 " -----------------------------
 " Plugins
 " -----------------------------
 call plug#begin('~/.vim/plugged')
+Plug 'FriesischScott/monokai-pro'
 Plug 'itchyny/lightline.vim'                " Better status line
-Plug 'lervag/vimtex'                        " Latex for vim
-" Plug 'rhysd/vim-grammarous'                 " Grammar checker
-Plug 'sainnhe/sonokai'                      " Theme
-Plug 'JuliaEditorSupport/julia-vim'         " Julia for vim
+
 Plug 'ntpeters/vim-better-whitespace'       " Better white spaces
-" Plug 'scrooloose/nerdtree'
-" Plug 'Xuyuanp/nerdtree-git-plugin'
-" Plug 'airblade/vim-gitgutter'
+Plug 'scrooloose/nerdtree'
+Plug 'airblade/vim-gitgutter'
+
+Plug 'lervag/vimtex'                        " Latex for vim
+Plug 'rhysd/vim-grammarous'                 " Grammar checker
+
+Plug 'JuliaEditorSupport/julia-vim'         " Julia for vim
+"Plug 'Xuyuanp/nerdtree-git-plugin'
+
 call plug#end()
 
 " -----------------------------
@@ -48,13 +52,22 @@ set expandtab
 set incsearch
 set hlsearch
 
+if has('clipboard')
+    " Use the system clipboard by default
+    set clipboard=unnamedplus
+endif
+
 " -----------------------------
 " Theme Configuration
 " -----------------------------
-let g:sonokai_style = 'andromeda'
-let g:sonokai_better_performance = 1
-colorscheme sonokai                     " set the colorscheme
-set termguicolors
+colorscheme monokai_pro_octagon                     " set the colorscheme
+let g:lightline = {
+      \ 'colorscheme': 'monokai_pro_octagon',
+      \ }
+if (has("termguicolors"))
+  set termguicolors
+endif
+
 
 " -----------------------------
 " Better-WhiteSpaces Configuration
@@ -66,7 +79,12 @@ augroup BetterWhitespace
     autocmd!
     autocmd BufWritePre * StripWhitespace
 augroup END
-            \
+
+" -----------------------------
+" Toggle NerdTree
+" -----------------------------
+
+map <C-o> :NERDTreeToggle<CR>
 " -----------------------------
 " Lightline status configuration
 " -----------------------------
@@ -76,17 +94,26 @@ set laststatus=2
 " VimTeX Configuration
 " -----------------------------
 " Enable grammarous only in LaTeX files
-" autocmd FileType tex,plaintex,latex nnoremap <buffer> <leader>g :GrammarousCheck<CR>
 autocmd FileType tex,plaintex,latex setlocal spell spelllang=en_us
 
-let g:vimtex_view_method = 'skim'           " Use Skim as PDF viewer
-let g:vimtex_view_skim_sync = 1             " Enable forward/inverse search
-let g:vimtex_view_skim_activate = 1         " Activate Skim on compile/view
-let g:vimtex_compiler_method = 'latexmk'    " Use latexmk as compiler
+" Xreader as viewer (no synctex support)
+let g:vimtex_view_method = 'general'
+let g:vimtex_view_general_viewer = 'xreader'
+let g:vimtex_view_general_options = '@pdf'
+
+let g:vimtex_compiler_method = 'latexmk'                            " Use latexmk as compiler
 let g:vimtex_compiler_latexmk = {
             \ 'build_dir' : '',
             \ 'callback' : 1,
             \ 'continuous' : 1,
             \ 'executable' : 'latexmk',
-            \ 'options' : ['-pdf', '-shell-escape', '-verbose', '-file-line-error', '-synctex=1', '-interaction=nonstopmode'],
+            \ 'options' : [
+            \   '-pdf',
+            \   '-shell-escape',
+            \   '-verbose',
+            \   '-file-line-error',
+            \   '-synctex=1',
+            \   '-interaction=nonstopmode',
+            \   '-bibtex'
+            \ ],
             \}
