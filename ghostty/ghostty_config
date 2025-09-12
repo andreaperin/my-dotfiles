@@ -6,6 +6,14 @@ window-theme = ghostty
 
 # Transparency
 background-opacity = 1.0
+# Blur radius [supported on MacOS only)]
+background-blur-radius = 20
+
+mouse-hide-while-typing = true
+
+window-padding-x = 10
+window-padding-y = 10
+window-padding-balance = true
 
 auto-update = download
 auto-update-channel = tip
