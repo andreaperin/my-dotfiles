@@ -83,8 +83,9 @@ augroup END
 " -----------------------------
 " Toggle NerdTree
 " -----------------------------
-
 map <C-o> :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
+
 " -----------------------------
 " Lightline status configuration
 " -----------------------------
