@@ -62,10 +62,10 @@ endif
 " -----------------------------
 colorscheme monokai_pro_octagon                     " set the colorscheme
 let g:lightline = {
-      \ 'colorscheme': 'monokai_pro_octagon',
-      \ }
+            \ 'colorscheme': 'monokai_pro_octagon',
+            \ }
 if (has("termguicolors"))
-  set termguicolors
+    set termguicolors
 endif
 
 
@@ -94,7 +94,17 @@ set laststatus=2
 " VimTeX Configuration
 " -----------------------------
 " Enable grammarous only in LaTeX files
-autocmd FileType tex,plaintex,latex setlocal spell spelllang=en_us
+autocmd FileType tex,plaintex,latex setlocal spell spelllang=en_gb
+
+augroup MySpell
+    autocmd!
+    " Clear and redefine only SpellBad after colorscheme loads
+    autocmd ColorScheme * highlight clear SpellBad
+    autocmd ColorScheme * highlight SpellBad cterm=underline gui=undercurl guisp=Red
+augroup END
+
+doautocmd ColorScheme
+
 
 " Xreader as viewer (no synctex support)
 let g:vimtex_view_method = 'general'
@@ -116,4 +126,4 @@ let g:vimtex_compiler_latexmk = {
             \   '-interaction=nonstopmode',
             \   '-bibtex'
             \ ],
-            \}
+            \ }
