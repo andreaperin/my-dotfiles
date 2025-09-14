@@ -88,7 +88,7 @@ augroup END
 " -----------------------------
 " Toggle NerdTree
 " -----------------------------
-map <C-o> :NERDTreeToggle<CR>
+map <F2> :NERDTreeToggle<CR>
 let NERDTreeShowHidden=1
 
 " -----------------------------
