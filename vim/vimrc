@@ -69,6 +69,10 @@ if (has("termguicolors"))
     set termguicolors
 endif
 
+" -----------------------------
+" Vertical Separator Configuration
+" -----------------------------
+highlight VertSplit cterm=NONE
 
 " -----------------------------
 " Better-WhiteSpaces Configuration
