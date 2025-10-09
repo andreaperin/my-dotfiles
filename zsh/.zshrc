@@ -56,6 +56,11 @@ if [ -f ~/.zsh_aliases ]; then
     source ~/.zsh_aliases
 fi
 
+# Load custom paths
+if [ -f ~/.zsh_paths ]; then
+    source ~/.zsh_paths
+fi
+
 # fix delete key
 bindkey    "^[[3~"     delete-char
 bindkey    "^[3;5~"    delete-char
@@ -69,7 +74,6 @@ alias reload="exec ${SHELL} -l"
 # Initialize zoxide for smarter directory jumping
 eval "$(zoxide init zsh)"
 
-
 # ------------------------
 # FZF
 # ------------------------
@@ -82,4 +86,3 @@ source <(fzf --zsh)
 # fzf default-like style with reverse layout and preview
 # Open in tmux popup if on tmux, otherwise use --height mode
 export FZF_DEFAULT_OPTS='--height 40% --tmux bottom,40% --layout reverse --border top --style default --preview 'fzf.preview.sh{}''
-
