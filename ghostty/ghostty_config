@@ -1,6 +1,8 @@
 theme = Monokai Pro Octagon
 font-family = Fira Code Nerd Font Mono
 
+cursor-invert-fg-bg
+
 window-decoration = false
 window-theme = ghostty
 
