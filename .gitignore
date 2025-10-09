@@ -36,3 +36,4 @@ vim/autoload/
 zsh/.zsh_plugins.zsh
 zsh/.zcompdump
 zsh/.antidote
+zsh/.zsh_history
