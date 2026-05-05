@@ -62,8 +62,10 @@ if [ -f ~/.zsh_paths ]; then
 fi
 
 # fix delete key
-bindkey    "^[[3~"     delete-char
-bindkey    "^[3;5~"    delete-char
+bindkey    "^[[H"       beginning-of-line
+bindkey    "^[[F"       end-of-line
+bindkey    "^[[3~"      delete-char
+bindkey    "^[3;5~"     delete-char
 
 # reload configurations
 alias reload="exec ${SHELL} -l"
