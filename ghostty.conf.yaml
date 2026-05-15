@@ -5,7 +5,7 @@
 - clean: ["~/.config/ghostty"]
 
 - link:
-    ~/.config/ghostty/config: ghostty/ghostty_config
+    ~/.config/ghostty/config: ghostty/config
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
