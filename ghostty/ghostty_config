@@ -3,13 +3,13 @@ font-family = Fira Code Nerd Font Mono
 
 cursor-invert-fg-bg
 
-window-decoration = false
+window-decoration = auto
+gtk-titlebar = false
+
 window-theme = ghostty
 
 # Transparency
-background-opacity = 1.0
-# Blur radius [supported on MacOS only)]
-background-blur-radius = 20
+background-opacity = 0.95
 
 mouse-hide-while-typing = true
 
