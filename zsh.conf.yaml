@@ -9,6 +9,8 @@
     ~/.zprofile: zsh/.zprofile
     ~/.zshenv: zsh/.zshenv
     ~/.config/zsh: zsh
-
+    ~/.config/.zsh_aliases: zsh/.zsh_aliases
+    ~/.config/.zsh_paths: zsh/.zsh_paths
+    
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
