@@ -27,7 +27,7 @@ Plug 'lervag/vimtex'                        " Latex for vim
 Plug 'rhysd/vim-grammarous'                 " Grammar checker
 
 Plug 'JuliaEditorSupport/julia-vim'         " Julia for vim
-"Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'jpalardy/vim-slime'
 
 call plug#end()
 
@@ -75,6 +75,13 @@ endif
 highlight VertSplit cterm=NONE
 
 " -----------------------------
+" Vertical Separator Configuration
+" -----------------------------
+let g:slime_target = 'tmux'
+let g:slime_default_config = {"socket_name": "default", "target_pane": "{right-of}"}
+let g:slime_dont_ask_default = 1
+
+" -----------------------------
 " Better-WhiteSpaces Configuration
 " -----------------------------
 let g:better_whitespace_enabled=1       " highlight withe spaces
@@ -114,7 +121,7 @@ doautocmd ColorScheme
 
 " Xreader as viewer (no synctex support)
 let g:vimtex_view_method = 'general'
-let g:vimtex_view_general_viewer = 'xreader'
+let g:vimtex_view_general_viewer = 'flatpak run org.gnome.Papers'
 let g:vimtex_view_general_options = '@pdf'
 
 let g:vimtex_compiler_method = 'latexmk'                            " Use latexmk as compiler
@@ -123,13 +130,4 @@ let g:vimtex_compiler_latexmk = {
             \ 'callback' : 1,
             \ 'continuous' : 1,
             \ 'executable' : 'latexmk',
-            \ 'options' : [
-            \   '-pdf',
-            \   '-shell-escape',
-            \   '-verbose',
-            \   '-file-line-error',
-            \   '-synctex=1',
-            \   '-interaction=nonstopmode',
-            \   '-bibtex'
-            \ ],
             \ }
