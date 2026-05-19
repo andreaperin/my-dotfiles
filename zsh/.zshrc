@@ -52,13 +52,13 @@ alias l='ls -lah'
 alias ll='ls -lh'
 alias la='ls -lAh'
 # Load external aliases
-if [ -f ~/.zsh_aliases ]; then
-    source ~config/.zsh_aliases
+if [ -f ~/.config/zsh/.zsh_aliases ]; then
+    source ~/.config/zsh/.zsh_aliases
 fi
 
 # Load custom paths
-if [ -f ~/.zsh_paths ]; then
-    source ~config/.zsh_paths
+if [ -f ~/.config/zsh/.zsh_paths ]; then
+    source ~/.config/zsh/.zsh_paths
 fi
 
 # fix delete key
