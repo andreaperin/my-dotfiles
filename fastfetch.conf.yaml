@@ -1,0 +1,11 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ["~/.config/fastfetch"]
+
+- link:
+    ~/.config/fastfetch/config.jsonc: fastfetch/config.jsonc
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
