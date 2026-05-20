@@ -19,7 +19,7 @@ https://github.com/PowerShell/PowerShell/releases
 Install Git using the official installer from the Git website.
 
 > The goal is to keep the installation minimal and avoid additional Git Bash integrations or shell components that are unnecessary for this setup.
-> 
+>
 During installation:
 
 - keep the setup minimal
@@ -61,3 +61,35 @@ Install-Module -Name Terminal-Icons -Scope CurrentUser
 ```powershell
 oh-my-posh font install
 ```
+
+# Solus Setup
+
+## Requirements
+## Recommended Modules
+```
+for type in \
+    text/plain \
+    text/x-python \
+    text/x-script.python \
+    text/x-shellscript \
+    text/x-c \
+    text/x-c++ \
+    text/x-java \
+    text/x-rust \
+    text/x-go \
+    text/x-lua \
+    text/x-perl \
+    text/x-ruby \
+    text/x-php \
+    text/x-julia \
+    text/x-tex \
+    text/markdown \
+    text/x-yaml \
+    application/x-yaml \
+    application/json \
+    application/xml
+do
+    xdg-mime default vim-terminal.desktop "$type"
+done
+```
+command to set default type to be open with ```vim```
