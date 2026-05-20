@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Vim (Terminal)
+Comment=Edit text files in Vim
+Exec=ghostty --config-file=~/.config/ghostty/text-editor.conf -e sh -c 'vim "$1"' sh %F
+Terminal=false
+Categories=Utility;TextEditor;
+MimeType=text/plain;

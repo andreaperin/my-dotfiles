@@ -1,0 +1,11 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ["~"]
+
+- link:
+     ~/.local/share/applications/vim-terminal-texteditor.desktop: vim/vim-terminal-texteditor.desktop
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
