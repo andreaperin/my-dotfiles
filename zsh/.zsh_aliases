@@ -1,6 +1,6 @@
 # custom file to load OS specific Aliases
 
-alias dashboard='ghostty --config-file=/home/perin/.config/ghostty/dashboard.conf --command="zsh /home/perin/dashboard.sh" >/dev/null 2>&1 & sleep 1 && wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz && disown && exit'
+alias dashboard='ghostty --config-file=/home/$USER/.config/ghostty/dashboard.conf --command="zsh /home/$USER/dashboard.sh" >/dev/null 2>&1 & sleep 1 && wmctrl -r :ACTIVE: -b add,maximized_vert,maximized_horz && disown && exit'
 
 function open() {
     nohup xdg-open "$1" > /dev/null 2>&1 &
