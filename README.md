@@ -93,3 +93,118 @@ do
 done
 ```
 command to set default type to be open with ```vim```
+
+
+# Linux Setup (SolusOS)
+
+## Additional
+
+### Resilio Sync
+
+Install compatibility package
+
+```bash
+sudo eopkg it libxcrypt-compat
+```
+
+---
+
+Download the correct `.tar.gz` package for your architecture from the official page:
+
+https://www.resilio.com/sync/download/
+
+---
+
+Extract the archive
+```bash
+tar -xf resilio-sync_x64.tar.gz
+```
+
+---
+
+Move Resilio Sync to a permanent location
+
+```bash
+mkdir -p ~/.local/share
+mv rslsync ~/.local/share/resilio-sync
+```
+
+---
+
+Create the systemd user service
+```bash
+mkdir -p ~/.config/systemd/user
+```
+Create the service file:
+```bash
+nano ~/.config/systemd/user/resilio-sync.service
+```
+
+Paste:
+
+```ini
+[Unit]
+Description=Resilio Sync Service (per-user)
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/YOUR_USERNAME/.local/share/resilio-sync/rslsync --nodaemon
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+```
+
+Replace:
+```text
+YOUR_USERNAME
+```
+with your actual Linux username.
+
+---
+
+Reload systemd
+
+```bash
+systemctl --user daemon-reload
+```
+
+---
+
+Enable autostart
+
+```bash
+systemctl --user enable resilio-sync.service
+```
+
+---
+
+Start Resilio Sync
+
+```bash
+systemctl --user start resilio-sync.service
+```
+
+---
+
+Enable lingering. This allows the user service to start automatically after reboot/login.
+```bash
+sudo loginctl enable-linger YOUR_USERNAME
+```
+
+---
+
+The Resilio Sync WebUI will be available at:
+
+```text
+http://localhost:8888
+```
+
+---
+
+Personal setup notes
+
+- Create identity using the existing `.bst` backup file
+- Link the new device to the existing Resilio Sync network
+
