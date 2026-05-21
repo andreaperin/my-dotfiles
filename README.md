@@ -154,7 +154,30 @@ make
 sudo make install
 ```
 
-### Vim default editor
+### Vim default editori
+
+Commands to set default type to be open with ```vim```
+
+
+After running `./install vim-default.conf.yaml` (eventually creating the director `~/.local/bin`)
+```chmod +x ~/.local/bin/vim-terminal-texteditor```
+
+Reload the shell and test the command  `vim-terminal-text-editor`.
+
+```
+desktop-file-validate ~/.local/share/applications/vim-terminal-texteditor.desktop
+```
+Update desktop database and test the new entry
+```
+update-desktop-database ~/.local/share/applications
+gtk-launch vim-terminal-texteditor
+```
+
+Cleanup previous mimeapp.list and set vim-terminal-texteditor as the new default one for every text-like file
+```
+rm -f ~/.config/mimeapps.list
+rm -f ~/.local/share/applications/mimeapps.list
+```
 
 ```
 for type in \
@@ -179,10 +202,10 @@ for type in \
     application/json \
     application/xml
 do
-    xdg-mime default vim-terminal.desktop "$type"
+    xdg-mime default vim-terminal-texteditor.desktop "$type"
+    gio mime "$type" vim-terminal-texteditor.desktop
 done
 ```
-command to set default type to be open with ```vim```
 
 
 ## Additional
@@ -307,4 +330,4 @@ Personal setup notes
 
 - Create identity using the existing `.bst` backup file
 - Link the new device to the existing Resilio Sync network
-  
+
