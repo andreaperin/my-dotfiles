@@ -6,6 +6,7 @@
 
 - link:
      ~/.local/share/applications/vim-terminal-texteditor.desktop: vim/vim-terminal-texteditor.desktop
+     ~/.local/bin/vim-terminal-texteditor: vim/vim-terminal-texteditor.sh
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
