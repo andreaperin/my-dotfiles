@@ -62,10 +62,100 @@ Install-Module -Name Terminal-Icons -Scope CurrentUser
 oh-my-posh font install
 ```
 
-# Solus Setup
+# Linux Setup (SolusOS)
 
-## Requirements
+## Prerequisites
+
+Before installing the dotfiles, make sure the following dependencies are installed on Solus.
+
+### Required packages
+
+- `zsh` — default shell
+- `git` — clone and manage the dotfiles repository
+- `vim` — terminal text editor
+- `font-firacode-nerd` — Nerd Font used by the terminal prompt and icons
+- `ghostty` — terminal emulator
+- `fzf` — fuzzy finder for shell navigation and history
+- `zoxide` — smarter `cd` replacement
+
+Install everything with:
+
+```bash
+sudo eopkg install zsh git vim font-firacode-nerd ghostty fzf zoxide
+```
+
+Set Zsh as the default shell:
+```
+chsh -s /usr/bin/zsh
+```
+Then reboot.
+
 ## Recommended Modules
+### Dashboard
+Install dashboard utilities:
+
+```bash
+sudo eopkg install fastfetch cava
+```
+
+- `fastfetch` — system information dashboard
+- `cava` — terminal audio visualizer
+
+#### cbonsai
+
+`cbonsai` is a terminal-based bonsai tree generator written in C using `ncurses`.
+
+Repository:
+
+```text
+https://gitlab.com/jallbrit/cbonsai
+```
+
+Install required dependencies:
+
+```bash
+sudo eopkg install make ncurses-devel
+sudo eopkg install -c system.devel
+```
+
+Clone and install:
+
+```bash
+git clone https://gitlab.com/jallbrit/cbonsai
+cd cbonsai
+make
+sudo make install
+```
+
+#### wmctrl
+
+`wmctrl` is a command-line utility to interact with X11-compatible window managers.
+
+Repository:
+
+```text
+https://github.com/Conservatory/wmctrl
+```
+
+Install required dependencies:
+
+```bash
+sudo eopkg install libx11-devel libxmu-devel glib2-devel
+sudo eopkg install -c system.devel
+```
+
+Clone and install:
+
+```bash
+git clone https://github.com/Conservatory/wmctrl.git
+cd wmctrl
+./configure
+make
+sudo make install
+```
+
+### Vim default editor
+
 ```
 for type in \
     text/plain \
@@ -95,9 +185,19 @@ done
 command to set default type to be open with ```vim```
 
 
-# Linux Setup (SolusOS)
-
 ## Additional
+Add `Hedron` repository to `eopkg`
+```
+sudo eopkg ar Hedron  https://hedron.friesischscott.de/eopkg-index.xml.xz
+```
+### zotero, seafile, mattermost, webex, juliaup, vscode
+All available via `eopkg`
+
+### keepassxc
+enable `Browser Integration` in `Tool/settings`
+
+### dconfig-editor
+fix ```Ctrl+Alt+T``` shorcut for Ghostty
 
 ### Resilio Sync
 
@@ -207,4 +307,4 @@ Personal setup notes
 
 - Create identity using the existing `.bst` backup file
 - Link the new device to the existing Resilio Sync network
-
+  
