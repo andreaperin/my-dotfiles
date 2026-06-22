@@ -33,6 +33,7 @@ $RECYCLE.BIN/
 vim/plugged/
 vim/.netrwhist
 vim/autoload/
+vim/undodir
 zsh/.zsh_plugins.zsh
 zsh/.zcompdump
 zsh/.antidote
