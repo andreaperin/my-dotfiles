@@ -1,0 +1,11 @@
+- defaults:
+    link:
+      relink: true
+
+- clean: ["~/.config/noctalia"]
+
+- link:
+    ~/.config/noctalia/settings.json: noctalia/settings.json
+
+- shell:
+    - [git submodule update --init --recursive, Installing submodules]
