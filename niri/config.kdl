@@ -7,38 +7,85 @@
 // Find the full list of options on the wiki:
 // https://niri-wm.github.io/niri/Configuration:-Input
 
-// CUSTOMIZEABLE
-// Use swaybg to set different wallpaper for different monitors
-spawn-at-startup "swaybg" \
-"-o" "DP-1" "-i" "/home/cincinperin/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fill" \
-"-o" "HDMI-A-1" "-i" "/home/cincinperin/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fit"
+//////////////////////////
+// WORKSTATION SPECIFIC //
+//////////////////////////
 
-// Monitors
-output "DP-1" {
-    mode "2560x1440@165.000"
+//// MONITORS ////
+// Laptop
+output "Lenovo Group Limited MNE007JA1-3 Unknown" {
+    mode "1920x1200@60.001"
+    scale 1
+    transform "normal"
+    position x=2560 y=0
+}
+output "Dell Inc. DELL U2719DC 6YP5MS2" {
+    mode "2560x1440@59.951"
     scale 1
     transform "normal"
     position x=0 y=0
 }
-output "HDMI-A-1" {
-    mode "1920x1080@74.986"
+output "Dell Inc. DELL U2518D 3C4YP88P195L" {
+    mode "2560x1440@59.951"
     scale 1
-    transform "90"
-    position x=2560 y=0
+    transform "normal"
+    position x=-2560 y=0
 }
+// Desktop PC
+// output "DP-1" {
+//    mode "2560x1440@165.000"
+//    scale 1
+//    transform "normal"
+//    position x=0 y=0
+//}
+//output "HDMI-A-1" {
+//    mode "1920x1080@74.986"
+//    scale 1
+//    transform "90"
+//    position x=2560 y=0
+//}
+
+//// DEFAULT WORKSPACES ////
+// Laptop
 workspace "1" {
-    open-on-output "DP-1"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 workspace "2" {
-    open-on-output "DP-1"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 workspace "3" {
-    open-on-output "DP-1"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 workspace "4" {
-    open-on-output "DP-1"
+    open-on-output "DDell Inc. DELL U2719DC 6YP5MS2"
 }
+// DesktopPC
+// workspace "1" {
+//     open-on-output "DP-1"
+// }
+// workspace "2" {
+//     open-on-output "DP-1"
+// }
+// workspace "3" {
+//     open-on-output "DP-1"
+// }
+// workspace "4" {
+//     open-on-output "DP-1"
+// }
 
+// Use swaybg to set different wallpaper for different monitors
+// Laptop
+spawn-at-startup "swaybg"\
+"-o" "eDP-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+"-o" "HDMI-A-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+"-o" "DP-11" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+// Desktop PC
+// spawn-at-startup "swaybg"\
+// "-o" "DP-1" "-i" "~/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fill" \
+// "-o" "HDMI-A-1" "-i" "~/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fit"\
+
+
+// GLOBAL
 
 // Use noctalia shell at startup
 spawn-sh-at-startup "/usr/local/bin/quickshell -c ~/.config/quickshell/noctalia-shell"
@@ -143,7 +190,7 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Return hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
-    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" { spawn "swaylock"; }
+    Super+Alt+L hotkey-overlay-title="Lock the Screen: swaylock" {spawn "swaylock" "--color" "000000";}
     Super+Alt+S allow-when-locked=true hotkey-overlay-title=null { spawn-sh "pkill orca || exec orca"; }
     Mod+B hotkey-overlay-title="Firefox" { spawn "firefox"; }
     Mod+E hotkey-overlay-title="Nemo" { spawn "nemo"; }
