@@ -42,9 +42,9 @@ workspace "4" {
     open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
 }
 
-spawn-at-startup "swaybg"\
-"-o" "PNP(AOC) Q32G2WG3 PSAM9JA001694" "-i" "~/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fill" \
-"-o" "ASUSTek COMPUTER INC VG245 L1LMQS036411" "-i" "~/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fit"\
+spawn-at-startup "swaybg" \
+"-o" "DP-1" "-i" "/home/cincinperin/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fill" \
+"-o" "HDMI-A-1" "-i" "/home/cincinperin/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fit"
 
 //////////////////////////
 ////// Laptop Work ///////
@@ -85,7 +85,7 @@ spawn-at-startup "swaybg"\
 //spawn-at-startup "swaybg"\
 //"-o" "eDP-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
 //"-o" "HDMI-A-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
-//"-o" "DP-11" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+//"-o" "DP-12" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
 
 
 ////////////////
