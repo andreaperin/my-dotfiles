@@ -164,6 +164,12 @@
                     "id": "NotificationHistory",
                     "showUnreadBadge": true,
                     "unreadBadgeColor": "primary"
+                },
+                {
+                    "displayMode": "onhover",
+                    "iconColor": "none",
+                    "id": "VPN",
+                    "textColor": "none"
                 }
             ]
         }
