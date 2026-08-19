@@ -50,36 +50,36 @@
 ////// Laptop Work ///////
 //////////////////////////
 
-output "Lenovo Group Limited MNE007JA1-3 Unknown" {
-    mode "1920x1200@60.001"
-    scale 1
-    transform "normal"
-    position x=2560 y=0
-}
-output "Dell Inc. DELL U2719DC 6YP5MS2" {
+output "DP-11" {
     mode "2560x1440@59.951"
     scale 1
     transform "normal"
     position x=0 y=0
 }
-output "Dell Inc. DELL U2518D 3C4YP88P195L" {
+output "HDMI-A-1" {
     mode "2560x1440@59.951"
     scale 1
     transform "normal"
     position x=-2560 y=0
 }
+output "eDP-1" {
+    mode "1920x1200@60.001"
+    scale 1
+    transform "normal"
+    position x=2560 y=0
+}
 
 workspace "1" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "DP-11"
 }
 workspace "2" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "DP-11"
 }
 workspace "3" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "DP-11"
 }
 workspace "4" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "DP-11"
 }
 
 spawn-at-startup "swaybg"\
