@@ -252,15 +252,15 @@
                     "id": "Network"
                 },
                 {
-                    "id": "Bluetooth"
+                    "id": "WiFi"
                 },
                 {
-                    "id": "Notifications"
+                    "id": "PowerProfile"
                 }
             ],
             "right": [
                 {
-                    "id": "PowerProfile"
+                    "id": "Bluetooth"
                 },
                 {
                     "id": "KeepAwake"
