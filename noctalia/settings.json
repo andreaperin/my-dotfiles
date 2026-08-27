@@ -355,7 +355,7 @@
             ]
         },
         "language": "en-GB",
-        "lockOnSuspend": true,
+        "lockOnSuspend": false,
         "lockScreenAnimations": false,
         "lockScreenBlur": 0,
         "lockScreenCountdownDuration": 10000,
