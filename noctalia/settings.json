@@ -11,7 +11,7 @@
         "enableClipboardChips": true,
         "enableClipboardHistory": false,
         "enableClipboardSmartIcons": true,
-        "enableSessionSearch": true,
+        "enableSessionSearch": false,
         "enableSettingsSearch": true,
         "enableWindowsSearch": true,
         "iconMode": "tabler",
