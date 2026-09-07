@@ -16,6 +16,10 @@
     ~/.config/noctalia/20-shell.toml: noctalia/config/20-shell.toml
     ~/.config/noctalia/30-theme.toml: noctalia/config/30-theme.toml
     ~/.config/noctalia/40-panels.toml: noctalia/config/40-panels.toml
+    ~/.config/noctalia/50-ui.toml: noctalia/config/50-ui.toml
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
+    # .git/hooks is not tracked, so point git at the tracked githooks/ dir
+    # instead. This makes the noctalia drift check work on a fresh clone.
+    - [git config core.hooksPath githooks, Wiring up tracked git hooks]

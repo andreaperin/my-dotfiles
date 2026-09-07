@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+#
+# Tracked git hook. Wired up by `./install noctalia.conf.yaml`, which sets
+#   git config core.hooksPath githooks
+# so this travels to every machine instead of living in untracked .git/hooks.
+#
+# Checks for noctalia settings that were changed in the Settings UI and never
+# migrated into dotfiles. Those silently override the tracked config, so the
+# point is to make an invisible problem visible at commit time.
+#
+# Blocks only when the commit actually touches noctalia/; otherwise it warns
+# and gets out of the way. Bypass with `git commit --no-verify`.
+
+set -u
+
+REPO="$(git rev-parse --show-toplevel)"
+CHECK="${REPO}/noctalia/check-drift.py"
+
+[ -x "${CHECK}" ] || exit 0
+
+output="$("${CHECK}" 2>&1)"
+status=$?
+
+[ ${status} -eq 0 ] && exit 0
+
+# Is this commit touching noctalia config at all?
+if git diff --cached --name-only | grep -q '^noctalia/'; then
+    echo "${output}"
+    echo
+    echo "-----------------------------------------------------------------"
+    echo "Commit blocked: you are committing noctalia config while untracked"
+    echo "overrides exist. Those overrides win at runtime, so the config you"
+    echo "are about to commit is not what this machine is actually using."
+    echo
+    echo "Migrate them, or bypass with:  git commit --no-verify"
+    echo "-----------------------------------------------------------------"
+    exit 1
+fi
+
+echo "${output}"
+echo
+echo "note: noctalia drift above is untracked, but this commit does not touch"
+echo "      noctalia/ - allowing it. Run noctalia/check-drift.py when ready."
+exit 0

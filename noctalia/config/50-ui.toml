@@ -1,0 +1,29 @@
+# Appearance and UI feel.
+#
+# [shell] and [bar.default] also appear in 20-shell.toml / 10-bar.toml.
+# noctalia merges sections across files per-key, so that is fine — these
+# keys are kept here because they are look-and-feel choices rather than
+# layout.
+#
+# Several values below match the v5 defaults. They are written explicitly
+# on purpose: they are deliberate preferences, not accidents of the
+# default, and stay put if upstream changes its mind.
+
+[accessibility]
+ui_scale = 1.2
+
+[shell]
+font_family = "sans-serif"   # v5 default; explicit by choice
+popup_shadows = false        # shadows off
+
+    [shell.animation]
+    enabled = true           # v5 default; explicit by choice
+
+    [shell.session]
+    grid = false             # single-row session menu (v5 default)
+
+[bar.default]
+background_opacity = 0.9
+concave_edge_corners = true  # outer corners on (v5 default)
+padding = 2
+shadow = false               # shadows off
