@@ -5,7 +5,7 @@
 - clean: ["~/.config/niri"]
 
 - link:
-    ~/.config/niri/config.kdl: niri/config.kdl
+    ~/.config/niri/config.kdl: niri/config_laptop.kdl
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
