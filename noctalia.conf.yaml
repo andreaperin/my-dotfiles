@@ -17,14 +17,7 @@
     ~/.config/noctalia/30-theme.toml: noctalia/config/30-theme.toml
     ~/.config/noctalia/40-panels.toml: noctalia/config/40-panels.toml
     ~/.config/noctalia/50-ui.toml: noctalia/config/50-ui.toml
-
-# Machine state. noctalia rewrites this file itself (wallpaper.last, and
-# anything changed in the Settings UI), so expect it to show up dirty in
-# git after normal use - that is the trade-off for having it tracked.
-    ~/.local/state/noctalia/settings.toml:
-      path: noctalia/settings_laptop.toml
-      force: true    # noctalia creates this as a regular file; replace it
-
+    
 # Assets, linked into Pictures so they show up where you browse for images.
     ~/Pictures/avatar.jpg: noctalia/assets/avatar.jpg
     ~/Pictures/Wallpapers/wallpaper.jpg: noctalia/assets/wallpaper.jpg

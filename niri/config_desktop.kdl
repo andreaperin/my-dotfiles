@@ -15,77 +15,31 @@
 /////// Desktop PC ///////
 //////////////////////////
 
-//output "PNP(AOC) Q32G2WG3 PSAM9JA001694" {
-//    mode "2560x1440@59.951"
-//    scale 1
-//    transform "normal"
-//    position x=0 y=0
-//}
-//output "ASUSTek COMPUTER INC VG245 L1LMQS036411" {
-//    mode "1920x1080@74.986"
-//    scale 1
-//    transform "90"
-//    position x=2560 y=0
-//}
-//
-//workspace "1" {
-//    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
-//}
-//workspace "2" {
-//    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
-//}
-//workspace "3" {
-//    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
-//}
-//workspace "4" {
-//    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
-//}
-//
-//spawn-at-startup "swaybg" \
-//"-o" "DP-1" "-i" "/home/cincinperin/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fill" \
-//"-o" "HDMI-A-1" "-i" "/home/cincinperin/Pictures/Wallpapers/deathstar_ascii.jpg" "-m" "fit"
-
-
-//////////////////////////
-////// Laptop Work ///////
-//////////////////////////
-
-output "Dell Inc. DELL U2719DC 6YP5MS2" {
+output "PNP(AOC) Q32G2WG3 PSAM9JA001694" {
     mode "2560x1440@59.951"
     scale 1
     transform "normal"
     position x=0 y=0
 }
-output "Dell Inc. DELL U2518D 3C4YP88P195L" {
-    mode "2560x1440@59.951"
+output "ASUSTek COMPUTER INC VG245 L1LMQS036411" {
+    mode "1920x1080@74.986"
     scale 1
-    transform "normal"
-    position x=-2560 y=0
-}
-output "eDP-1" {
-    mode "1920x1200@60.001"
-    scale 1
-    transform "normal"
+    transform "90"
     position x=2560 y=0
 }
 
 workspace "1" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
 }
 workspace "2" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
 }
 workspace "3" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
 }
 workspace "4" {
-    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
+    open-on-output "PNP(AOC) Q32G2WG3 PSAM9JA001694"
 }
-
-// spawn-at-startup "swaybg"\
-// "-o" "eDP-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
-// "-o" "HDMI-A-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
-// "-o" "DP-11" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
 
 
 ////////////////
@@ -375,8 +329,4 @@ binds {
     // The allow-inhibiting=false property can be applied to other binds as well,
     // which ensures niri always processes them, even when an inhibitor is active.
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
-}
-
-switch-events {
-    lid-close { spawn "sh" "-c" "pgrep -x swaylock >/dev/null || swaylock -f --color 000000; systemctl suspend"; }
 }
