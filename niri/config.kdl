@@ -50,13 +50,13 @@
 ////// Laptop Work ///////
 //////////////////////////
 
-output "DP-11" {
+output "Dell Inc. DELL U2719DC 6YP5MS2" {
     mode "2560x1440@59.951"
     scale 1
     transform "normal"
     position x=0 y=0
 }
-output "HDMI-A-1" {
+output "Dell Inc. DELL U2518D 3C4YP88P195L" {
     mode "2560x1440@59.951"
     scale 1
     transform "normal"
@@ -70,22 +70,22 @@ output "eDP-1" {
 }
 
 workspace "1" {
-    open-on-output "DP-11"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 workspace "2" {
-    open-on-output "DP-11"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 workspace "3" {
-    open-on-output "DP-11"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 workspace "4" {
-    open-on-output "DP-11"
+    open-on-output "Dell Inc. DELL U2719DC 6YP5MS2"
 }
 
-spawn-at-startup "swaybg"\
-"-o" "eDP-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
-"-o" "HDMI-A-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
-"-o" "DP-11" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+// spawn-at-startup "swaybg"\
+// "-o" "eDP-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+// "-o" "HDMI-A-1" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
+// "-o" "DP-11" "-i" "/home/perin/Pictures/Wallpapers/abstract_purple.jpg" "-m" "fill"\
 
 
 ////////////////
@@ -94,7 +94,7 @@ spawn-at-startup "swaybg"\
 
 
 // Use noctalia shell at startup
-spawn-sh-at-startup "/usr/local/bin/quickshell -c ~/.config/quickshell/noctalia-shell"
+spawn-sh-at-startup "noctalia"
 // Avoid client-side-decorations
 prefer-no-csd
 // This line starts waybar, a commonly used bar for Wayland compositors.
