@@ -4,8 +4,18 @@
 
 - clean: ["~/.config/noctalia"]
 
+# noctalia 5.x loads every *.toml in ~/.config/noctalia, then layers
+# ~/.local/state/noctalia/settings.toml on top. The state file is written by
+# the UI and holds machine-specific things (monitor layouts, last wallpaper),
+# so it is deliberately NOT tracked here — only these shared files are.
+#
+# Caveat: state overrides config. If a key here appears to do nothing, it is
+# because the same key is still present in settings.toml. Remove it there.
 - link:
-    ~/.config/noctalia/settings.json: noctalia/settings.json
+    ~/.config/noctalia/10-bar.toml: noctalia/config/10-bar.toml
+    ~/.config/noctalia/20-shell.toml: noctalia/config/20-shell.toml
+    ~/.config/noctalia/30-theme.toml: noctalia/config/30-theme.toml
+    ~/.config/noctalia/40-panels.toml: noctalia/config/40-panels.toml
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]

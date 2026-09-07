@@ -1,0 +1,28 @@
+# Control centre, calendar, location, desktop widgets.
+
+[calendar]
+enabled = true
+
+[desktop_widgets]
+enabled = false
+
+[location]
+auto_locate = true
+
+[[control_center.shortcuts]]
+type = "wifi"
+
+[[control_center.shortcuts]]
+type = "bluetooth"
+
+[[control_center.shortcuts]]
+type = "caffeine"
+
+[[control_center.shortcuts]]
+type = "power_profile"
+
+[[control_center.shortcuts]]
+type = "audio"
+
+[[control_center.shortcuts]]
+type = "mic_mute"

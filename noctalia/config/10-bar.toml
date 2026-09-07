@@ -1,0 +1,35 @@
+# Bar layout and widgets.
+# Portable: no monitor-specific keys here.
+
+[bar.default]
+start = [ "workspaces" ]
+center = [ "control-center", "group:g2" ]
+end = [ "network", "spacer_2", "tray", "group:g1", "battery", "spacer_3", "session" ]
+font_weight = 600
+margin_ends = 20
+
+    [[bar.default.capsule_group]]
+    id = "g1"
+    members = [ "bluetooth", "volume" ]
+    enabled = true
+    accordion = false
+    accordion_direction = "end"
+    fill = "surface_variant"
+    opacity = 1.0
+    padding = 6.0
+
+    [[bar.default.capsule_group]]
+    id = "g2"
+    members = [ "clock", "date" ]
+    enabled = true
+    accordion = false
+    accordion_direction = "end"
+    fill = "surface_variant"
+    opacity = 1.0
+    padding = 6.0
+
+[widget.spacer_2]
+type = "spacer"
+
+[widget.spacer_3]
+type = "spacer"

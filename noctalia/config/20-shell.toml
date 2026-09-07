@@ -1,0 +1,44 @@
+# Shell identity and session menu.
+# Paths use ~/ so they resolve on any machine / username.
+
+[shell]
+avatar_path = "~/dotfiles/noctalia/assets/avatar.jpg"
+
+    # Session menu entries.
+    # `lock` and `lock_and_suspend` are disabled on purpose: locking and
+    # suspending are owned by niri (Super+Alt+L / Mod+Shift+S / lid close),
+    # which routes through swaylock. See niri/config.kdl.
+    [[shell.session.actions]]
+    action = "lock"
+    enabled = false
+    shortcut = "1"
+    countdown_seconds = 0.0
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "logout"
+    enabled = true
+    shortcut = "2"
+    countdown_seconds = 0.0
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "lock_and_suspend"
+    enabled = false
+    shortcut = "3"
+    countdown_seconds = 0.0
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "reboot"
+    enabled = true
+    shortcut = "4"
+    countdown_seconds = 0.0
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "shutdown"
+    enabled = true
+    shortcut = "5"
+    countdown_seconds = 0.0
+    variant = "destructive"

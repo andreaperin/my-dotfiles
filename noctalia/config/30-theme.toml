@@ -1,0 +1,24 @@
+# Theme and wallpaper.
+#
+# No [wallpaper.monitors.*] entries here on purpose — those key off connector
+# names (DP-10, HDMI-A-1, ...) which are not stable across boots or docks.
+# [wallpaper.default] covers every screen, including single-monitor setups.
+
+[theme]
+source = "community"
+builtin = "Eldritch"
+community_palette = "Kanagawa Dragon"
+mode = "dark"
+wallpaper_scheme = "m3-tonal-spot"
+
+[wallpaper]
+enabled = true
+
+[wallpaper.default]
+path = "~/dotfiles/noctalia/assets/wallpaper.jpg"
+
+[[wallpaper.favorite]]
+path = "~/dotfiles/noctalia/assets/wallpaper.jpg"
+palette_source = "community"
+community_palette = "Kanagawa Dragon"
+theme_mode = "dark"
