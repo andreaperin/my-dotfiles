@@ -73,6 +73,7 @@ input {
         repeat-delay 200
 
         xkb {
+            layout "gb,us"
         }
         numlock
     }
@@ -148,6 +149,7 @@ window-rule {
 }
 
 binds {
+    Mod+Space { switch-layout "next"; }
     Mod+Shift+Slash { show-hotkey-overlay; }
     Mod+Return hotkey-overlay-title="Open a Terminal: ghostty" { spawn "ghostty"; }
     Mod+D hotkey-overlay-title="Run an Application: fuzzel" { spawn "fuzzel"; }
