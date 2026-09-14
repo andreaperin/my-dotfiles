@@ -3,6 +3,8 @@ vim.g.maplocalleader = "\\"
 
 vim.keymap.set("n", "<leader>pv", vim.cmd.Ex)
 
+vim.keymap.set("n", "<leader>h", function() require("cincinperin.misc.help").show() end, { desc = "Personal Cheatsheet" })
+
 vim.keymap.set("n", "<Esc>", "<Esc><Cmd>noh<CR>", { desc = "Clear Search Highlight" })
 
 vim.keymap.set({ "n", "v" }, "<Up>", "gk")

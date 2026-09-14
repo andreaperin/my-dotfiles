@@ -7,6 +7,15 @@ source of truth if anything here ever looks stale.
 
 Leader = `<Space>`. Local-leader = `\`.
 
+## Personal Cheatsheet Popup (`lua/cincinperin/misc/help.lua`)
+
+`<leader>h` opens a floating quick-reference of every custom command in this config,
+grouped by area (Buffers, Tabs, Terminal, Send to Terminal, Formatting, Julia, LaTeX,
+Typst, Markdown, Git, Search, Multicursor, Finding Things, Undo History, Misc). Close
+with `q` or `<Esc>`. Not a replacement for this file — this is the fast, scannable
+version for "what was that key again?" while actually editing; this file has the full
+prose/rationale/gotchas. Keep both in sync when a keymap changes.
+
 ## Buffers & Windows
 
 | Key | Does |
