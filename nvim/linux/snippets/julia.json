@@ -1,0 +1,34 @@
+{
+  "description-section": {
+    "prefix": "desc",
+    "body": [
+      "## Description #############################################################################",
+      "#",
+      "# ${1:Description of the code}",
+      "#",
+      "############################################################################################",
+      "$0"
+    ],
+    "description": "Description section for code files"
+  },
+  "irz-header": {
+    "prefix": "IRZ",
+    "body": [
+      "#############################################################################################",
+      "#",
+      "#                                                              Leibniz University of Hannover",
+      "#                                                    Institute for Risk and Reliability (IRZ)",
+      "#                                                                           Hannover, Germany",
+      "#",
+      "# Author: Andrea Perin <andrea.perin@irz.uni-hannover.de>",
+      "#",
+      "## Description ##############################################################################",
+      "#",
+      "# ${1:Description of the project}",
+      "#",
+      "#############################################################################################",
+      "$0"
+    ],
+    "description": "Header for IRZ projects"
+  }
+}
