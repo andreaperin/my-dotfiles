@@ -1,3 +1,46 @@
+# How This Repo Works
+
+This repo is managed with [dotbot](https://github.com/anishathalye/dotbot) (vendored as a
+git submodule). Each tool has its own `<app>.conf.yaml` manifest (e.g. `git.conf.yaml`,
+`nvim.conf.yaml`, `niri_desktop.yaml`) declaring which dotfiles get symlinked where.
+
+**First time cloning this repo**, pull in the dotbot submodule too:
+```bash
+git clone --recurse-submodules git@github.com:andreaperin/my-dotfiles.git
+# or, if already cloned without --recurse-submodules:
+git submodule update --init --recursive
+```
+
+**Linux**: apply one tool at a time by running its config file:
+```bash
+./install <app>.conf.yaml   # e.g. ./install nvim.conf.yaml, ./install git.conf.yaml
+```
+
+**Windows**: `install.ps1` always applies the single `windows.conf.yaml` (everything for
+that platform at once, not per-app like Linux) and needs Python on `PATH`:
+```powershell
+./install.ps1
+```
+
+# Table of Contents
+
+- [Windows Setup](#windows-setup)
+  - [Requirements](#requirements)
+    - [Python](#python)
+  - [Recommended PowerShell Modules](#recommended-powershell-modules)
+- [Linux Setup (SolusOS)](#linux-setup-solusos)
+  - [Prerequisites](#prerequisites)
+  - [Neovim configuration](#neovim-configuration)
+    - [Julia (the language itself)](#julia-the-language-itself)
+    - [Core CLI tools](#core-cli-tools)
+    - [LSP servers](#lsp-servers-none-of-these-auto-install)
+    - [Julia tooling](#julia-tooling)
+    - [LaTeX](#latex)
+    - [Git tooling (Neovim)](#git-tooling-neovim)
+    - [Fonts (Neovim)](#fonts-neovim)
+  - [Recommended Modules](#recommended-modules)
+  - [Personal Notes (Author)](#personal-notes-author)
+
 # Windows Setup
 
 ## Requirements
@@ -11,6 +54,18 @@ Install PowerShell 7 using the official `.msi` installer from Microsoft.
 Download the latest `.msi` release from:
 
 https://github.com/PowerShell/PowerShell/releases
+
+---
+
+### Python
+
+Needed by `install.ps1` itself (dotbot is Python-based) — winget's Python packages are
+versioned per-minor-release, so check for the current one instead of hardcoding a version
+that'll go stale:
+```powershell
+winget search Python.Python.3
+winget install --id Python.Python.3.13   # substitute whatever version the search returned
+```
 
 ---
 
@@ -30,21 +85,32 @@ During installation:
 
 ### Windows Terminal
 
-Install Windows Terminal using `winget`:
+```powershell
+winget install --id Microsoft.WindowsTerminal
+```
 
 ---
 
 ### Oh My Posh
 
-Install Oh My Posh using `winget`:
+```powershell
+winget install --id JanDeDobbeleer.OhMyPosh
+```
 
 ---
 
 ### Neovim
 
-Install Neovim using `winget`:
+```powershell
+winget install --id Neovim.Neovim
+```
 
+Set it as the default `$EDITOR` (used by `git commit` and similar tools) — this only
+applies to the current session:
+```powershell
 $env:EDITOR = "nvim"
+```
+To persist it across sessions, add that line to your PowerShell profile (`$PROFILE`).
 
 ---
 
@@ -73,6 +139,8 @@ Before installing the dotfiles, make sure the following dependencies are install
 - `zsh` — default shell
 - `git` — clone and manage the dotfiles repository
 - `vim` — terminal text editor
+- `neovim` — main editor (see the Neovim section below for its own, more extensive
+  dependency list)
 - `font-firacode-nerd` — Nerd Font used by the terminal prompt and icons
 - `ghostty` — terminal emulator
 - `fzf` — fuzzy finder for shell navigation and history
@@ -81,7 +149,7 @@ Before installing the dotfiles, make sure the following dependencies are install
 Install everything with:
 
 ```bash
-sudo eopkg install zsh git vim font-firacode-nerd ghostty fzf zoxide
+sudo eopkg install zsh git vim neovim font-firacode-nerd ghostty fzf zoxide
 ```
 
 Set Zsh as the default shell:
@@ -89,6 +157,132 @@ Set Zsh as the default shell:
 chsh -s /usr/bin/zsh
 ```
 Then reboot.
+
+## Neovim configuration
+
+The Neovim config lives at `nvim/linux` (symlinked to `~/.config/nvim` via
+`nvim.conf.yaml`) — a from-scratch setup. The full keymap/feature reference lives in
+`nvim/linux/CHEATSHEET.md`. Everything below is what it needs beyond Neovim/`vim.pack`
+itself to actually work on a fresh machine.
+
+Neovim itself: **≥ 0.12** (built and tested on 0.12.5) — several things were specifically
+adjusted to work on *stable* Neovim rather than nightly, so an older release may hit the
+same class of issue again.
+
+### Julia (the language itself)
+
+Everything Julia-specific in the Neovim config — the LSP, Runic, `<leader>bf`/`<leader>bv`,
+the Julia snippets — assumes `julia` is already on `PATH`, regardless of which Julia
+project you're actually editing. Install via **juliaup** (the officially recommended
+installer, manages multiple Julia versions) — packaged for Solus:
+```bash
+sudo eopkg install juliaup
+```
+(On another distro without a `juliaup` package, use the official installer instead:
+`curl -fsSL https://install.julialang.org | sh`.)
+
+### Core CLI tools
+
+```bash
+sudo eopkg install tree-sitter-cli
+```
+Required by `nvim-treesitter` (the new rewrite this config uses) to build/compile parsers.
+Also needs a working **C compiler** (`gcc`/`cc`) — virtually always already present on a dev
+machine, but worth checking (`command -v cc`).
+
+```bash
+sudo eopkg install ripgrep fd
+```
+Required by `mini.pick` for `<leader>ff` (find files) and `<leader>fg` (live grep).
+
+`git` and `curl` — `git` is needed both by `vim.pack` itself (cloning plugins) and at
+*runtime* by `mini.git`/`mini.diff` (sign-column markers, `<leader>go`, `:Git`) and
+LazyGit itself; `curl` is needed by `vim.pack` and by `typst-preview.nvim`/
+`markdown-preview.nvim` (both download their own pre-built preview binaries on first
+use, with no separate Node.js/Deno runtime required to run the downloaded binary
+itself). Practically always already present, not worth a dedicated install step.
+
+### LSP servers (none of these auto-install)
+
+**Lua** — precompiled binary, not packaged for Solus. Check
+https://github.com/LuaLS/lua-language-server/releases for the latest version and adjust the
+URL below:
+```bash
+mkdir -p ~/.local/share/lua-language-server
+curl -L https://github.com/LuaLS/lua-language-server/releases/download/<VERSION>/lua-language-server-<VERSION>-linux-x64.tar.gz | tar xz -C ~/.local/share/lua-language-server
+ln -sf ~/.local/share/lua-language-server/bin/lua-language-server ~/.local/bin/lua-language-server
+```
+
+**Typst** — precompiled binary (`tinymist`), the LSP. Check
+https://github.com/Myriad-Dreamin/tinymist/releases for the latest `tinymist-linux-x64`
+asset:
+```bash
+curl -L -o ~/.local/bin/tinymist https://github.com/Myriad-Dreamin/tinymist/releases/download/<VERSION>/tinymist-linux-x64
+chmod +x ~/.local/bin/tinymist
+```
+No separate standalone `typst` CLI is needed — confirmed via `typst-preview.nvim`'s own
+README, its only listed dependency is `curl` (it bundles/downloads its own compiler
+binary on first use, same as `markdown-preview.nvim` does).
+
+**Julia** — needs `LanguageServer.jl` installed into its own dedicated environment (NOT
+auto-installed by `nvim-lspconfig`, despite some other LSP servers being self-installing):
+```bash
+julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
+```
+
+Both `~/.local/bin` and `~/.julia/bin` (see Runic below) need to be on `PATH`.
+
+### Julia tooling
+
+**Runic** (the Julia code formatter) — `Pkg.Apps.add` installs it as a standalone global
+app (not a dependency of whatever project you happen to be in), but it must be run from
+the **base/default Julia environment** — i.e. from a directory with no active
+`Project.toml` (not from inside any Julia project's directory), so it lands in the shared
+app registry rather than getting tangled up with a project-specific environment:
+```bash
+cd ~ && julia -e 'using Pkg; Pkg.Apps.add("Runic")'
+```
+Installs to `~/.julia/bin/runic` — make sure `~/.julia/bin` is on `PATH` (this machine has
+it via `~/.config/zsh/.zsh_paths`, sourced from `.zshrc` — **note**: `.zshrc`-sourced PATH
+entries are only visible to *interactive* shells, so anything checking `executable('runic')`
+non-interactively, including Neovim launched in odd ways, needs this confirmed working from
+inside a real running Neovim session, not just a terminal `command -v` check).
+
+### LaTeX
+
+TeX Live itself (providing `pdflatex`, `latexmk`) is assumed already installed — the
+Neovim config doesn't set it up, just uses it.
+
+**`latexindent`** (LaTeX formatter, bundled with TeX Live but **not functional out of the
+box** — missing Perl modules):
+```bash
+sudo eopkg install perl-yaml-tiny perl-file-homedir
+```
+
+**Okular** (PDF viewer, for `vimtex` forward/inverse search — Zathura is the other common
+choice if preferred instead, also in Solus repos):
+```bash
+sudo eopkg install okular
+```
+Inverse search (Okular → jump back to Neovim) also needs a one-time **manual GUI setting**
+in Okular itself — see `nvim/linux/CHEATSHEET.md`'s LaTeX section for the exact steps and
+command.
+
+### Git tooling (Neovim)
+
+```bash
+sudo eopkg install lazygit
+```
+
+### Fonts (Neovim)
+
+```bash
+sudo eopkg install font-firacode-nerd
+```
+A Nerd Font is required for `mini.icons`' glyphs (file-type icons in `mini.pick`/`mini.files`)
+and the custom statusline's icons/separators. Any Nerd Font variant works, not specifically
+FiraCode — this is just what's on this machine. Your terminal emulator also needs to be
+configured to actually use it as its font.
 
 ## Recommended Modules
 ### Dashboard
@@ -154,180 +348,73 @@ make
 sudo make install
 ```
 
-### Vim default editori
+## Personal Notes (Author)
 
-Commands to set default type to be open with ```vim```
+Miscellaneous personal setup steps for this author's own machines — not general bootstrap
+instructions, kept here for reference when setting up a new one.
 
-
-After running `./install vim-default.conf.yaml` (eventually creating the director `~/.local/bin`)
-```chmod +x ~/.local/bin/vim-terminal-texteditor```
-
-Reload the shell and test the command  `vim-terminal-text-editor`.
-
-```
-desktop-file-validate ~/.local/share/applications/vim-terminal-texteditor.desktop
-```
-Update desktop database and test the new entry
-```
-update-desktop-database ~/.local/share/applications
-gtk-launch vim-terminal-texteditor
+**Extra `eopkg` repository** (needed for some of the apps below):
+```bash
+sudo eopkg ar Hedron https://hedron.friesischscott.de/eopkg-index.xml.xz
 ```
 
-Cleanup previous mimeapp.list and set vim-terminal-texteditor as the new default one for every text-like file
-```
-rm -f ~/.config/mimeapps.list
-rm -f ~/.local/share/applications/mimeapps.list
-```
+**Apps available directly via `eopkg`**: `zotero`, `seafile`, `mattermost`, `webex`, `vscode`.
 
-```
-for type in \
-    text/plain \
-    text/x-python \
-    text/x-script.python \
-    text/x-shellscript \
-    text/x-c \
-    text/x-c++ \
-    text/x-java \
-    text/x-rust \
-    text/x-go \
-    text/x-lua \
-    text/x-perl \
-    text/x-ruby \
-    text/x-php \
-    text/x-julia \
-    text/x-tex \
-    text/markdown \
-    text/x-yaml \
-    application/x-yaml \
-    application/json \
-    application/xml
-do
-    xdg-mime default vim-terminal-texteditor.desktop "$type"
-    gio mime "$type" vim-terminal-texteditor.desktop
-done
-```
+**KeePassXC**: enable `Browser Integration` in `Tools → Settings`.
 
-
-## Additional
-Add `Hedron` repository to `eopkg`
-```
-sudo eopkg ar Hedron  https://hedron.friesischscott.de/eopkg-index.xml.xz
-```
-### zotero, seafile, mattermost, webex, juliaup, vscode
-All available via `eopkg`
-
-### keepassxc
-enable `Browser Integration` in `Tool/settings`
-
-### dconfig-editor
-fix ```Ctrl+Alt+T``` shorcut for Ghostty
+**dconf-editor**: used to fix the `Ctrl+Alt+T` shortcut for Ghostty.
 
 ### Resilio Sync
 
-Install compatibility package
+1. Install the compatibility package:
+   ```bash
+   sudo eopkg it libxcrypt-compat
+   ```
 
-```bash
-sudo eopkg it libxcrypt-compat
-```
+2. Download the correct `.tar.gz` for your architecture from the official page:
+   https://www.resilio.com/sync/download/
 
----
+3. Extract it and move it to a permanent location:
+   ```bash
+   tar -xf resilio-sync_x64.tar.gz
+   mkdir -p ~/.local/share
+   mv rslsync ~/.local/share/resilio-sync
+   ```
 
-Download the correct `.tar.gz` package for your architecture from the official page:
+4. Create the systemd user service:
+   ```bash
+   mkdir -p ~/.config/systemd/user
+   nano ~/.config/systemd/user/resilio-sync.service
+   ```
+   Paste (replacing `YOUR_USERNAME` with your actual Linux username):
+   ```ini
+   [Unit]
+   Description=Resilio Sync Service (per-user)
+   After=network.target
 
-https://www.resilio.com/sync/download/
+   [Service]
+   Type=simple
+   ExecStart=/home/YOUR_USERNAME/.local/share/resilio-sync/rslsync --nodaemon
+   Restart=on-failure
 
----
+   [Install]
+   WantedBy=default.target
+   ```
 
-Extract the archive
-```bash
-tar -xf resilio-sync_x64.tar.gz
-```
+5. Reload systemd, enable, and start the service:
+   ```bash
+   systemctl --user daemon-reload
+   systemctl --user enable resilio-sync.service
+   systemctl --user start resilio-sync.service
+   ```
 
----
+6. Enable lingering, so the user service also starts automatically after reboot/login:
+   ```bash
+   sudo loginctl enable-linger YOUR_USERNAME
+   ```
 
-Move Resilio Sync to a permanent location
+7. The WebUI is then available at http://localhost:8888.
 
-```bash
-mkdir -p ~/.local/share
-mv rslsync ~/.local/share/resilio-sync
-```
-
----
-
-Create the systemd user service
-```bash
-mkdir -p ~/.config/systemd/user
-```
-Create the service file:
-```bash
-nano ~/.config/systemd/user/resilio-sync.service
-```
-
-Paste:
-
-```ini
-[Unit]
-Description=Resilio Sync Service (per-user)
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/home/YOUR_USERNAME/.local/share/resilio-sync/rslsync --nodaemon
-Restart=on-failure
-
-[Install]
-WantedBy=default.target
-```
-
-Replace:
-```text
-YOUR_USERNAME
-```
-with your actual Linux username.
-
----
-
-Reload systemd
-
-```bash
-systemctl --user daemon-reload
-```
-
----
-
-Enable autostart
-
-```bash
-systemctl --user enable resilio-sync.service
-```
-
----
-
-Start Resilio Sync
-
-```bash
-systemctl --user start resilio-sync.service
-```
-
----
-
-Enable lingering. This allows the user service to start automatically after reboot/login.
-```bash
-sudo loginctl enable-linger YOUR_USERNAME
-```
-
----
-
-The Resilio Sync WebUI will be available at:
-
-```text
-http://localhost:8888
-```
-
----
-
-Personal setup notes
-
-- Create identity using the existing `.bst` backup file
-- Link the new device to the existing Resilio Sync network
+**Identity setup**: create the identity using the existing `.bst` backup file, then link the
+new device to the existing Resilio Sync network.
 
