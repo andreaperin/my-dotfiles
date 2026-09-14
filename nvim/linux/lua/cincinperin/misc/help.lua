@@ -92,6 +92,7 @@ local groups = {
     title = "Typst",
     entries = {
       { "<leader>ct", "Toggle live preview (bidirectional cursor sync)" },
+      { "<leader>cc", "Compile to a standalone PDF (auto-saves first)" },
     },
   },
   {

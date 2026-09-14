@@ -381,10 +381,10 @@ required in Okular itself (can't be done from the Neovim config side) —
    click/drag in this mode pans the page rather than selecting text — that's expected, not a
    bug; text selection needs the separate Selection tool (`Ctrl+2`).
 
-## Typst (`typst-preview.nvim`)
+## Typst (`typst-preview.nvim` + `after/ftplugin/typst.lua`)
 
-Loads only when a `.typ` file is opened (lazy, on filetype). First use downloads its preview
-binaries via `curl` — give it a moment the very first time.
+`typst-preview.nvim` loads only when a `.typ` file is opened (lazy, on filetype). First
+use downloads its preview binaries via `curl` — give it a moment the very first time.
 
 | Key / Command | Does |
 |---|---|
@@ -393,10 +393,13 @@ binaries via `curl` — give it a moment the very first time.
 | `:TypstPreviewStop` | Stop the preview |
 | `:TypstPreviewSyncCursor` | Scroll the preview to the current cursor position |
 | `:TypstPreviewFollowCursor` / `:TypstPreviewNoFollowCursor` | Toggle whether the preview auto-scrolls as you move the cursor (on by default) |
+| `<leader>cc` | Compile to a standalone PDF (`typst compile`, not the live preview) — auto-saves first if the buffer has unsaved changes, since compiling reads from disk. Errors from a bad compile show via `vim.notify` with the full compiler output |
 
 Preview updates live as you type, and clicking in the preview jumps the cursor to the
 corresponding place in the source (cross-jump, similar in spirit to vimtex's forward/inverse
-search, but automatic/bidirectional rather than a manual keypress).
+search, but automatic/bidirectional rather than a manual keypress). `<leader>cc` is separate
+from the preview — it's for when you want an actual `.pdf` file on disk, independent of
+whether the preview is running.
 
 ## Markdown (`render-markdown.nvim` + `markdown-preview.nvim`)
 
