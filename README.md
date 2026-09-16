@@ -36,6 +36,7 @@ that platform at once, not per-app like Linux) and needs Python on `PATH`:
     - [LSP servers](#lsp-servers-none-of-these-auto-install)
     - [Julia tooling](#julia-tooling)
     - [LaTeX](#latex)
+    - [AI Assistant (Neovim)](#ai-assistant-neovim)
     - [Git tooling (Neovim)](#git-tooling-neovim)
     - [Fonts (Neovim)](#fonts-neovim)
   - [Recommended Modules](#recommended-modules)
@@ -267,6 +268,24 @@ sudo eopkg install okular
 Inverse search (Okular → jump back to Neovim) also needs a one-time **manual GUI setting**
 in Okular itself — see `nvim/linux/CHEATSHEET.md`'s LaTeX section for the exact steps and
 command.
+
+### AI Assistant (Neovim)
+
+The `99` plugin (`<leader>9*` keymaps) shells out to a CLI AI agent per invocation. Only
+Claude is actually set up right now — switching to another provider at runtime
+(`<leader>9p`) needs that provider's own CLI installed too.
+
+**Claude Code CLI** (`claude`), via the official native installer (not `eopkg`, not npm):
+```bash
+curl -fsSL https://claude.ai/install.sh | bash
+```
+Installs to `~/.local/share/claude/versions/`, symlinked from `~/.local/bin/claude` — make
+sure `~/.local/bin` is on `PATH` (already required above for the Lua LSP/Typst LSP too).
+
+**Note**: the Claude provider always runs `claude --dangerously-skip-permissions` — this
+is hardcoded in `99`'s own source, not a config option. See
+`nvim/linux/CHEATSHEET.md`'s "AI Assistant" section for what that actually means before
+using it.
 
 ### Git tooling (Neovim)
 

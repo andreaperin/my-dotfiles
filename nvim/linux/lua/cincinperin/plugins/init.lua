@@ -33,6 +33,7 @@ require("cincinperin.plugins.terminal")
 require("cincinperin.plugins.lazygit")
 require("cincinperin.plugins.snippets")
 require("cincinperin.plugins.cmdline")
+require("cincinperin.plugins.99")
 
 require("cincinperin.misc.statusline").setup()
 

@@ -1,5 +1,9 @@
 {
   "plugins": {
+    "99": {
+      "rev": "c17422457027c913c76c75a921fca1e623d2678e",
+      "src": "https://github.com/ThePrimeagen/99"
+    },
     "brightburn.vim": {
       "rev": "fc0d2fafc51e86d6065acd54b5e82e686019ff2f",
       "src": "https://github.com/erikbackman/brightburn.vim"

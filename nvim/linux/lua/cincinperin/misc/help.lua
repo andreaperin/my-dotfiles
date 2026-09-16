@@ -102,6 +102,18 @@ local groups = {
     },
   },
   {
+    title = "AI Assistant (99)",
+    entries = {
+      { "<leader>9v", "(visual) Edit selection with a prompt" },
+      { "<leader>9s", "Search project with a prompt (results -> quickfix)" },
+      { "<leader>9x", "Stop all in-flight requests" },
+      { "<leader>9o", "Open last interaction's results" },
+      { "<leader>9l", "View request/response logs" },
+      { "<leader>9m", "Switch model for current provider" },
+      { "<leader>9p", "Switch provider (Claude/OpenCode/Gemini/...)" },
+    },
+  },
+  {
     title = "Git",
     entries = {
       { "<leader>gg", "Open LazyGit (floating)" },

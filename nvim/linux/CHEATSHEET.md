@@ -432,6 +432,41 @@ KaTeX math and Mermaid diagrams out of the box. Unlike Typst's preview, this is 
 sync only (cursor → preview scroll) — no click-in-browser-to-jump-to-source, that's a
 Typst-specific feature its tooling happens to support.
 
+## AI Assistant (`99`)
+
+Shells out to a real CLI AI agent per invocation (not a persistent chat/background
+process) — one-shot: you trigger it, it runs, result comes back. Loads on `later`
+(non-blocking startup, same tier as most other plugins).
+
+| Key | Does |
+|---|---|
+| `<leader>9v` (visual) | Send the selection + a prompt (you'll be asked for it) to the AI, replace the selection with the result |
+| `<leader>9s` | Search the project with a prompt, results land in the quickfix list |
+| `<leader>9x` | Stop all in-flight requests |
+| `<leader>9o` | Open the last interaction's results (quickfix for search/visual) |
+| `<leader>9l` | View the most recent request/response logs |
+| `<leader>9m` | Switch model for the current provider (`mini.pick`, custom — `99` only ships telescope/fzf-lua pickers by default) |
+| `<leader>9p` | Switch provider entirely (`mini.pick`, custom, same reason) — resets to that provider's default model |
+
+**Default provider: Claude** (via the `claude` CLI), default model `claude-sonnet-4-5`.
+Switch to `OpenCodeProvider`/`CursorAgentProvider`/`GeminiCLIProvider`/`KiroProvider` any
+time with `<leader>9p`, no restart needed — each needs its own CLI tool installed and on
+`PATH` to actually work (only `claude` is set up so far).
+
+**Real safety note, not hypothetical**: the Claude provider always runs `claude
+--dangerously-skip-permissions` — this is hardcoded in `99`'s own source, not something a
+config option can turn off. Every `<leader>9v`/`<leader>9s` call through it is a one-shot,
+fully-autonomous subprocess for that single invocation — no per-action confirmation for
+file edits or shell commands it decides to run while satisfying that one request. Consciously
+accepted, not an oversight — matters if you're about to trigger it on something sensitive.
+
+The `<leader>9m`/`<leader>9p` pickers are a small custom module
+(`lua/cincinperin/misc/ninetynine_pickers.lua`) built on `99`'s own
+`99.extensions.pickers` data/apply logic (the same one its telescope/fzf-lua extensions
+use) — only the picker UI itself is swapped for `vim.ui.select`, already routed to
+`MiniPick.ui_select` elsewhere in this config, so no new fuzzy-finder dependency was added
+just for this.
+
 ## Language Servers (LSP)
 
 Active for: Lua (`lua_ls`), Julia (`julials`), Typst (`tinymist`). No LSP for LaTeX — that's
