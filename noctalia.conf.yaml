@@ -24,6 +24,3 @@
 
 - shell:
     - [git submodule update --init --recursive, Installing submodules]
-    # .git/hooks is not tracked, so point git at the tracked githooks/ dir
-    # instead. This makes the noctalia drift check work on a fresh clone.
-    - [git config core.hooksPath githooks, Wiring up tracked git hooks]
