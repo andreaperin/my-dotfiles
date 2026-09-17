@@ -1,0 +1,330 @@
+#!/usr/bin/env python3
+"""claude-session — list, remove and restore Claude Code session transcripts.
+
+A session is one .jsonl file under ~/.claude/projects/<encoded-project>/.
+Removing moves the file to a trash directory, so it can always be put back.
+"""
+
+import json
+import os
+import re
+import shutil
+import sys
+
+HOME = os.path.expanduser("~")
+ROOT = os.path.join(HOME, ".claude", "projects")
+TRASH = os.path.join(HOME, ".claude", ".session-trash")
+CONFIG = os.path.join(HOME, ".claude.json")
+CURRENT = os.environ.get("CLAUDE_CODE_SESSION_ID") or os.environ.get("CLAUDE_SESSION_ID", "")
+SESSIONS = os.path.join(HOME, ".claude", "sessions")
+
+USAGE = """claude-session — manage Claude Code session transcripts
+
+  claude-session --list
+      Show every session with its ID, name, session hash and project.
+      A name you set yourself wins over the auto-generated one; a name
+      Claude generated is shown in (parentheses).
+
+  claude-session --rename <id> <new name>
+      Name a session. <id> is the ID column number or the session hash.
+      Quote the name, or just let it run to the end of the line.
+
+  claude-session --open <id>
+      Resume that session, from its own project directory.
+
+  claude-session --remove <id> [<id> ...]
+      Remove sessions. Each <id> is either the ID column number or the
+      session hash (the short form shown is enough). Files are moved to
+      ~/.claude/.session-trash, never deleted outright.
+
+  claude-session --restore
+      Show what is currently in the trash.
+
+  claude-session --restore <id> [<id> ...]
+      Put those sessions back. <id> is the ID column from --restore,
+      or the session hash.
+
+  claude-session --restore --all
+      Put everything in the trash back.
+
+  claude-session --empty-trash
+      Permanently delete the trash. This is the only irreversible action.
+"""
+
+# Claude Code stores a session's name as an appended record in the transcript:
+# {"type":"custom-title","customTitle":...} for a name someone set (ctrl+r in
+# the resume picker), {"type":"ai-title","aiTitle":...} for a generated one.
+# The last record of each kind wins, and a custom title beats a generated one.
+
+
+def live_sessions():
+    """Session ids of Claude processes still running, from ~/.claude/sessions."""
+    live = set()
+    try:
+        entries = os.listdir(SESSIONS)
+    except OSError:
+        return live
+    for entry in entries:
+        if not entry.endswith(".json"):
+            continue
+        try:
+            with open(os.path.join(SESSIONS, entry)) as fh:
+                rec = json.load(fh)
+            pid, sid = rec["pid"], rec["sessionId"]
+            with open(f"/proc/{pid}/cmdline", "rb") as fh:
+                if b"claude" in fh.read():
+                    live.add(sid)
+        except (OSError, ValueError, KeyError):
+            continue
+    return live
+
+
+def project_names():
+    """Map encoded directory name -> real project path, from ~/.claude.json."""
+    try:
+        with open(CONFIG) as fh:
+            paths = json.load(fh).get("projects", {})
+    except (OSError, ValueError):
+        return {}
+    return {re.sub(r"[/._]", "-", p): p for p in paths}
+
+
+def title_of(path):
+    """(name, is_custom) for a transcript, or (None, False) if it has none."""
+    custom = ai = None
+    try:
+        with open(path, errors="replace") as fh:
+            for line in fh:
+                try:
+                    rec = json.loads(line)
+                except ValueError:
+                    continue
+                kind = rec.get("type")
+                if kind == "custom-title":
+                    custom = rec.get("customTitle") or custom
+                elif kind == "ai-title":
+                    ai = rec.get("aiTitle") or ai
+    except OSError:
+        return None, False
+    return (custom, True) if custom else (ai, False)
+
+
+def collect(base):
+    """Every .jsonl under base, as (session_hash, project_dir, full_path)."""
+    out = []
+    for dirpath, _dirnames, filenames in os.walk(base):
+        for name in filenames:
+            if name.endswith(".jsonl"):
+                full = os.path.join(dirpath, name)
+                out.append((name[:-6], os.path.relpath(dirpath, base), full))
+    return sorted(out, key=lambda r: (r[1], r[0]))
+
+
+def render(rows, empty_msg):
+    if not rows:
+        print(empty_msg)
+        return
+    names = project_names()
+    labels = []
+    for _sid, _pdir, full in rows:
+        name, custom = title_of(full)
+        labels.append(name if custom else f"({name})" if name else "-")
+    nw = max(len("NAME"), *(len(x) for x in labels))
+    pw = max(len("PROJECT"), *(len(names.get(d, d)) for _s, d, _f in rows))
+    print(f"{'ID':>3}  {'NAME':<{nw}}  {'SESSION':<10}  {'PROJECT':<{pw}}")
+    running = live_sessions()
+    for i, ((sid, pdir, _full), label) in enumerate(zip(rows, labels), 1):
+        mark = ""
+        if CURRENT and sid == CURRENT:
+            mark = "  <- current"
+        elif sid in running:
+            mark = "  <- running"
+        print(f"{i:>3}  {label:<{nw}}  {sid[:8]:<10}  {names.get(pdir, pdir):<{pw}}{mark}")
+
+
+def resolve(rows, token):
+    """An ID column number, or a session-hash prefix."""
+    if token.isdigit():
+        n = int(token)
+        if 1 <= n <= len(rows):
+            return rows[n - 1]
+        return None
+    hits = [r for r in rows if r[0].startswith(token)]
+    if len(hits) == 1:
+        return hits[0]
+    if len(hits) > 1:
+        print(f"'{token}' matches {len(hits)} sessions — use more characters", file=sys.stderr)
+    return None
+
+
+def move(src, src_base, dst_base):
+    rel = os.path.relpath(src, src_base)
+    dst = os.path.join(dst_base, rel)
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    shutil.move(src, dst)
+    prune(os.path.dirname(src), src_base)
+    return rel
+
+
+def prune(directory, base):
+    """Drop a project directory once its last transcript has moved out."""
+    if os.path.realpath(directory) == os.path.realpath(base):
+        return
+    try:
+        if not os.listdir(directory):
+            os.rmdir(directory)
+    except OSError:
+        pass
+
+
+def cmd_list():
+    render(collect(ROOT), "No sessions found.")
+
+
+def cmd_remove(tokens):
+    rows = collect(ROOT)
+    if not tokens:
+        print("Nothing to remove. Pass an ID or session hash — see --list.", file=sys.stderr)
+        return 1
+    failed = False
+    removed = 0
+    for token in tokens:
+        row = resolve(rows, token)
+        if row is None:
+            print(f"no session matching '{token}'", file=sys.stderr)
+            failed = True
+            continue
+        sid, _pdir, full = row
+        if CURRENT and sid == CURRENT:
+            print(f"skipped {sid[:8]} — that is the session you are running in")
+            continue
+        if sid in live_sessions():
+            print(f"skipped {sid[:8]} — a Claude process is still using it; "
+                  f"exit that session first")
+            continue
+        print(f"removed {sid[:8]}  ({move(full, ROOT, TRASH)})")
+        removed += 1
+    if removed:
+        print(f"\nRecoverable with --restore until you run --empty-trash.")
+    return 1 if failed else 0
+
+
+def cmd_restore(tokens):
+    rows = collect(TRASH) if os.path.isdir(TRASH) else []
+    if not rows:
+        print("The trash is empty.")
+        return 0
+    if not tokens:
+        render(rows, "The trash is empty.")
+        print("\nRestore with: claude-session --restore <id> [...]   or --restore --all")
+        return 0
+    targets = rows if "--all" in tokens else []
+    if not targets:
+        for token in tokens:
+            row = resolve(rows, token)
+            if row is None:
+                print(f"no trashed session matching '{token}'", file=sys.stderr)
+                continue
+            targets.append(row)
+    for sid, _pdir, full in targets:
+        print(f"restored {sid[:8]}  ({move(full, TRASH, ROOT)})")
+    if os.path.isdir(TRASH) and not collect(TRASH):
+        shutil.rmtree(TRASH, ignore_errors=True)
+    return 0
+
+
+def cmd_open(tokens):
+    if len(tokens) != 1:
+        print("Usage: claude-session --open <id>", file=sys.stderr)
+        return 2
+    rows = collect(ROOT)
+    row = resolve(rows, tokens[0])
+    if row is None:
+        print(f"no session matching '{tokens[0]}'", file=sys.stderr)
+        return 1
+    sid, pdir, full = row
+    if CURRENT and sid == CURRENT:
+        print("That is the session you are already in.", file=sys.stderr)
+        return 1
+    if sid in live_sessions():
+        print(f"note: {sid[:8]} is already open elsewhere — Claude will resume a copy",
+              file=sys.stderr)
+    workdir = project_names().get(pdir)
+    if workdir and os.path.isdir(workdir):
+        os.chdir(workdir)
+    else:
+        print(f"note: {workdir or pdir} is not on disk — resuming from {os.getcwd()}",
+              file=sys.stderr)
+    name, _custom = title_of(full)
+    print(f"resuming {sid[:8]}  {name or ''}".rstrip())
+    sys.stdout.flush()
+    sys.stderr.flush()
+    try:
+        os.execvp("claude", ["claude", "--resume", sid])
+    except OSError as exc:
+        print(f"could not launch claude: {exc}", file=sys.stderr)
+        return 1
+
+
+def cmd_rename(tokens):
+    if len(tokens) < 2:
+        print("Usage: claude-session --rename <id> <new name>", file=sys.stderr)
+        return 2
+    rows = collect(ROOT)
+    row = resolve(rows, tokens[0])
+    if row is None:
+        print(f"no session matching '{tokens[0]}'", file=sys.stderr)
+        return 1
+    name = " ".join(tokens[1:]).strip()
+    if not name:
+        print("The new name cannot be empty.", file=sys.stderr)
+        return 2
+    sid, _pdir, full = row
+    was, _custom = title_of(full)
+    record = {"type": "custom-title", "customTitle": name, "sessionId": sid}
+    try:
+        with open(full, "a") as fh:
+            fh.write(json.dumps(record, separators=(",", ":")) + "\n")
+    except OSError as exc:
+        print(f"could not write to the transcript: {exc}", file=sys.stderr)
+        return 1
+    print(f"renamed {sid[:8]}")
+    print(f"  from: {was or '(no name)'}")
+    print(f"  to:   {name}")
+    return 0
+
+
+def cmd_empty_trash():
+    if not os.path.isdir(TRASH):
+        print("The trash is empty.")
+        return 0
+    rows = collect(TRASH)
+    shutil.rmtree(TRASH)
+    print(f"Permanently deleted {len(rows)} session(s).")
+    return 0
+
+
+def main(argv):
+    if not argv or argv[0] in ("-h", "--help"):
+        print(USAGE)
+        return 0
+    cmd, rest = argv[0], argv[1:]
+    if cmd == "--list":
+        cmd_list()
+        return 0
+    if cmd == "--remove":
+        return cmd_remove(rest)
+    if cmd == "--open":
+        return cmd_open(rest)
+    if cmd == "--rename":
+        return cmd_rename(rest)
+    if cmd == "--restore":
+        return cmd_restore(rest)
+    if cmd == "--empty-trash":
+        return cmd_empty_trash()
+    print(f"unknown option '{cmd}'\n\n{USAGE}", file=sys.stderr)
+    return 2
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))
