@@ -39,6 +39,7 @@ that platform at once, not per-app like Linux) and needs Python on `PATH`:
     - [AI Assistant (Neovim)](#ai-assistant-neovim)
     - [Git tooling (Neovim)](#git-tooling-neovim)
     - [Fonts (Neovim)](#fonts-neovim)
+  - [Claude Code tooling](#claude-code-tooling)
   - [Recommended Modules](#recommended-modules)
   - [Personal Notes (Author)](#personal-notes-author)
 
@@ -302,6 +303,26 @@ A Nerd Font is required for `mini.icons`' glyphs (file-type icons in `mini.pick`
 and the custom statusline's icons/separators. Any Nerd Font variant works, not specifically
 FiraCode — this is just what's on this machine. Your terminal emulator also needs to be
 configured to actually use it as its font.
+
+## Claude Code tooling
+
+`claude.conf.yaml` is the odd one out: instead of linking a config file, it links an
+executable into `~/.local/bin`.
+
+```bash
+./install claude.conf.yaml
+```
+
+- `claude/claude-session` — lists, renames, opens, removes and restores Claude Code
+  session transcripts (the `.jsonl` files under `~/.claude/projects/`). Removals go to
+  `~/.claude/.session-trash`, so they can be undone. Run `claude-session` with no
+  arguments for the full usage text.
+
+Needs Python 3 (already a prerequisite for dotbot) and `~/.local/bin` on `PATH` — on
+SolusOS the system profile adds it, so nothing in `zsh/.zsh_paths` does.
+
+This manifest sets `force: true`, which the others don't: the script normally already
+exists at the destination as a real file, and dotbot refuses to overwrite one without it.
 
 ## Recommended Modules
 ### Dashboard
