@@ -404,6 +404,119 @@ sudo eopkg ar Hedron https://hedron.friesischscott.de/eopkg-index.xml.xz
 
 **dconf-editor**: used to fix the `Ctrl+Alt+T` shortcut for Ghostty.
 
+### Noctalia Greeter
+
+`noctalia-greeter` (from the Hedron repo above) is a greetd login screen matching Noctalia
+Shell. Nothing here is dotbot-managed — it all lives under `/etc` and `/var/lib`.
+
+```bash
+sudo eopkg install noctalia-greeter
+```
+
+1. **Seed greetd's config into `/etc`.** Solus is stateless: packages ship their vendor
+   defaults under `/usr/share/defaults/`, and `/etc` holds the machine's overrides
+   (https://help.getsol.us/docs/user/software/configuration_files/).
+   ```bash
+   sudo mkdir -p /etc/greetd
+   sudo cp -a /usr/share/defaults/greetd/config.toml /etc/greetd/config.toml
+   ```
+   Then set `[default_session]` in the copy:
+   ```toml
+   [terminal]
+   vt = 1
+
+   [default_session]
+   command = "/usr/bin/noctalia-greeter-session"
+   user = "greeter"
+   ```
+   Append `-- --session Niri` to `command` to skip the session picker — the name has to
+   match what `noctalia-greeter sessions` prints.
+
+2. **Copy the PAM stack too.** Not optional, and not obvious:
+   ```bash
+   sudo mkdir -p /etc/pam.d
+   sudo cp -a /usr/share/defaults/etc/pam.d/greetd /etc/pam.d/greetd
+   ```
+   libpam itself falls back to `/usr/share/defaults/etc/pam.d/` — which is why the whole
+   system authenticates fine with no `/etc/pam.d` at all — but greetd pre-checks for its
+   service file in `/etc/pam.d/` and `/usr/lib/pam.d/` *only*, and exits before PAM is ever
+   consulted. Symptom if skipped: **black screen after reboot**, with greetd restart-looping
+   (`error: PAM 'greetd' service missing`, then `start-limit-hit`) — visible via
+   `journalctl -b -1 -u greetd`. The copied file needs no edits: it includes
+   `system-local-login` → `system-login`, which already has `pam_systemd`.
+
+3. **Create the greeter's state files** — `greeter.toml` and `sync.toml` under
+   `/var/lib/noctalia-greeter`, owned by `greeter`. Run this *after* step 1, since it reads
+   `/etc/greetd/config.toml` to resolve the account:
+   ```bash
+   sudo GREETER_USER=greeter /usr/bin/noctalia-greeter-apply-appearance --setup-system
+   ```
+   Don't use the package's own `/usr/share/noctalia-greeter/setup_greeter_system.sh` here:
+   it wraps the same call but also runs a PAM patch step that, on Solus, appends a duplicate
+   `pam_systemd` line to the file copied in step 2.
+
+4. **Take over from LightDM**, then reboot:
+   ```bash
+   sudo systemctl disable lightdm
+   sudo systemctl enable greetd
+   ```
+   `enable` writes `/etc/systemd/system/display-manager.service`, which overrides the vendor
+   symlink `/usr/lib/systemd/system/display-manager.service` → `lightdm.service`. Verify with
+   `readlink -f /etc/systemd/system/display-manager.service`. Don't `systemctl start greetd`
+   from a running graphical session — it wants VT 1 and conflicts with `getty@tty1` while
+   LightDM still holds the display.
+
+**Recovery** — if the screen comes up black, Ctrl+Alt+F2 gives a TTY (greetd only takes
+VT 1):
+```bash
+sudo systemctl disable greetd && sudo systemctl enable lightdm && sudo reboot
+```
+
+**Customizing**: `/var/lib/noctalia-greeter/greeter.toml` is the declarative, hand-edited
+one — the greeter UI and appearance sync never write to it. Use `sudoedit` so it stays
+`greeter:greeter`. Its generated comments document every key; the sections are
+`[appearance]` (`scheme`, `theme_mode`, `password_style`, `hide_logo`,
+`power_buttons_position`, `scheme_selector_position`, `corner_radius_scale`,
+`font_family`), `[appearance.palette]`, `[appearance.wallpaper]`,
+`[appearance.wallpapers.<connector>]` (connector names from `noctalia-greeter outputs`),
+`[auth]`, `[keyboard]`, `[output]`, `[idle]`, `[cursor]`, `[session]` and `[user]`.
+
+`sync.toml` in the same directory is the opposite — written by the greeter UI and by
+appearance sync, so don't hand-edit it. The power menu (`[session.power]`,
+`[[session.actions]]`) lives there and isn't settable in `greeter.toml`.
+
+**Syncing the shell's theme to the greeter** — wallpaper, palette and monitor
+layout/scales/transforms, from the desktop session (not from a TTY):
+```bash
+noctalia msg greeter-sync
+```
+
+This needs a polkit agent, and noctalia's is off by default — without one the sync dies at
+authorization with no dialog and nothing on stdout, logging only `Error creating textual
+authentication agent`. Enable it in `noctalia/config/20-shell.toml`, under `[shell]`:
+```toml
+polkit_agent = true
+```
+
+For automatic syncing on every theme change, plus no password prompt each time — same file,
+as a table at the end:
+```toml
+[shell.greeter_sync]
+auto_sync = true
+```
+```bash
+noctalia msg config-reload
+sudo /usr/bin/noctalia-greeter passwordless-sync enable <user>
+```
+
+`msg` answers `ok` as soon as the daemon accepts the command, so check the log, not the
+terminal — grep first and tail the *matches*, since `tail | grep` misses it on a log this
+chatty:
+```bash
+grep 'greeter-sync' ~/.cache/noctalia/noctalia.log | tail -8
+```
+Success ends in `synced shell appearance to greeter`.
+
 ### Resilio Sync
 
 1. Install the compatibility package:

@@ -3,7 +3,7 @@
 
 [shell]
 avatar_path = "~/dotfiles/noctalia/assets/avatar.jpg"
-
+polkit_agent = true
     # Session menu entries.
     # `lock` and `lock_and_suspend` are disabled on purpose: locking and
     # suspending are owned by niri (Super+Alt+L / Mod+Shift+S / lid close),
@@ -42,3 +42,6 @@ avatar_path = "~/dotfiles/noctalia/assets/avatar.jpg"
     shortcut = "5"
     countdown_seconds = 0.0
     variant = "destructive"
+
+[shell.greeter_sync]
+    auto_sync = true
