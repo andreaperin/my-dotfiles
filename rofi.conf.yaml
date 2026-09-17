@@ -6,6 +6,3 @@
 
 - link:
     ~/.config/rofi: rofi
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

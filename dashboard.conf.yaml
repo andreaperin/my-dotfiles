@@ -6,6 +6,3 @@
 
 - link:
     ~/dashboard.sh: dashboard/dashboard.sh
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

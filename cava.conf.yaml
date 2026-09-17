@@ -6,6 +6,3 @@
 
 - link:
     ~/.config/cava/config: cava/config
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

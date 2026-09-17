@@ -7,6 +7,3 @@
 
 - link:
     ~/.julia/config/startup.jl: julia/startup.jl
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

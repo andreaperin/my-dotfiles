@@ -12,6 +12,3 @@
     ~/.config/ghostty/config.ghostty: ghostty/config
     ~/.config/ghostty/dashboard.conf: ghostty/dashboard.conf
     ~/.config/ghostty/text-editor.conf: ghostty/text-editor.conf
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

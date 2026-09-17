@@ -21,6 +21,3 @@
 # Assets, linked into Pictures so they show up where you browse for images.
     ~/Pictures/avatar.jpg: noctalia/assets/avatar.jpg
     ~/Pictures/Wallpapers/wallpaper.jpg: noctalia/assets/wallpaper.jpg
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

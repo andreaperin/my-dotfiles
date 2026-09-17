@@ -6,6 +6,3 @@
 
 - link:
     ~/.latexmkrc: latex/latexmkrc
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

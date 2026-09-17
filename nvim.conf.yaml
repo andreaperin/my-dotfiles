@@ -6,6 +6,3 @@
 
 - link:
     ~/.config/nvim: nvim/linux
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

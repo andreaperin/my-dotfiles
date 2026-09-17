@@ -20,5 +20,3 @@
     ~/themes: pwsh/themes
     ~/AppData/Local/nvim/init.lua: nvim/nvim_windows.lua
     
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]

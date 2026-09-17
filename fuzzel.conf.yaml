@@ -6,6 +6,3 @@
 
 - link:
     ~/.config/fuzzel/fuzzel.ini: fuzzel/fuzzel.ini
-
-- shell:
-    - [git submodule update --init --recursive, Installing submodules]
