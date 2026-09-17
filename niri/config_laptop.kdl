@@ -262,7 +262,7 @@ binds {
     Ctrl+Alt+Delete { quit; }
 
     Mod+Shift+P { power-off-monitors; }
-    Mod+Alt+S { spawn-sh "pgrep -x swaylock >/dev/null || swaylock -f --color 000000; systemctl suspend"; }
+    Mod+Alt+S hotkey-overlay-title="Lock and Suspend: noctalia" { spawn-sh "noctalia msg session lock-and-suspend"; }
 
     // Actions to switch layouts.
     // Note: if you uncomment these, make sure you do NOT have
@@ -338,5 +338,5 @@ binds {
 }
 
 switch-events {
-    lid-close { spawn "sh" "-c" "pgrep -x swaylock >/dev/null || swaylock -f --color 000000; systemctl suspend"; }
+    lid-close { spawn "noctalia" "msg" "session" "lock-and-suspend"; }
 }
