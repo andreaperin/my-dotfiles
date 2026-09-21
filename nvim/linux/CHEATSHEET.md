@@ -370,12 +370,11 @@ required in Okular itself (can't be done from the Neovim config side) —
 1. Okular → Settings → Configure Okular → Editor → set editor to **Custom Text Editor**, with
    command:
    ```
-   nvim --headless "%f" -c "VimtexInverseSearch %l '%f'"
+   nvim --headless -c "packadd vimtex" -c "VimtexInverseSearch %l '%f'"
    ```
-   (the `"%f"` file argument is required — without it, `nvim --headless` never opens a `.tex`
-   file, so its `FileType` event never fires, so vimtex — which only loads on that event —
-   never loads, so the `VimtexInverseSearch` command doesn't exist yet when Okular tries to
-   run it)
+   (`packadd` is required: Okular spawns a second, headless nvim, where vimtex's lazy
+   `FileType tex` load never happens in time — so the command wouldn't exist. Opening the
+   file with `"%f"` instead does *not* work; that load is scheduled, and `-c` runs first.)
 2. In Okular, switch to Browse mode (`Ctrl+1`, Tools menu — this is also the default mouse
    mode), then **Shift+Click** on text in the PDF to jump back to that line in Neovim. A plain
    click/drag in this mode pans the page rather than selecting text — that's expected, not a
