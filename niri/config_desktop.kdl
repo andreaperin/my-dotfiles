@@ -131,13 +131,13 @@ animations {
 
 
 window-rule {
-    match app-id="Mattermost"
+    match app-id="zulip"
     open-on-workspace "1"
     open-maximized true
 }
 
 window-rule {
-    match app-id="thunderbird"
+    match app-id="net.thunderbird.Thunderbird"
     open-on-workspace "2"
     open-maximized true
 }
