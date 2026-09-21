@@ -54,6 +54,11 @@ workspace "4" {
 
 // Use noctalia shell at startup
 spawn-sh-at-startup "noctalia"
+spawn-sh-at-startup "zulip"
+spawn-sh-at-startup "thunderbird"
+spawn-sh-at-startup "seafile-applet"
+spawn-at-startup "keepassxc" "--minimized"
+
 // Avoid client-side-decorations
 prefer-no-csd
 // This line starts waybar, a commonly used bar for Wayland compositors.
@@ -135,7 +140,7 @@ animations {
 
 
 window-rule {
-    match app-id="Mattermost"
+    match app-id="Zulip"
     open-on-workspace "1"
     open-maximized true
 }
