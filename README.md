@@ -49,21 +49,15 @@ that platform at once, not per-app like Linux) and needs Python on `PATH`:
 
 ### PowerShell 7
 
-Install PowerShell 7 using the official `.msi` installer from Microsoft.
-
-> Depending on your system configuration, `winget` may install the Microsoft Store version instead, which can lead to:
-
-Download the latest `.msi` release from:
-
-https://github.com/PowerShell/PowerShell/releases
+Use the official `.msi` from https://github.com/PowerShell/PowerShell/releases — `winget`
+may install the Microsoft Store version instead.
 
 ---
 
 ### Python
 
-Needed by `install.ps1` itself (dotbot is Python-based) — winget's Python packages are
-versioned per-minor-release, so check for the current one instead of hardcoding a version
-that'll go stale:
+Needed by `install.ps1` (dotbot is Python-based). winget versions these per minor release,
+so check the current one rather than hardcoding:
 ```powershell
 winget search Python.Python.3
 winget install --id Python.Python.3.13   # substitute whatever version the search returned
@@ -73,15 +67,8 @@ winget install --id Python.Python.3.13   # substitute whatever version the searc
 
 ### Git
 
-Install Git using the official installer from the Git website.
-
-> The goal is to keep the installation minimal and avoid additional Git Bash integrations or shell components that are unnecessary for this setup.
->
-During installation:
-
-- keep the setup minimal
-- avoid extra shell integrations if not needed
-- use PowerShell as the main shell environment
+Official installer from the Git website. Keep it minimal — skip the Git Bash shell
+integrations, PowerShell is the shell here.
 
 ---
 
@@ -107,12 +94,10 @@ winget install --id JanDeDobbeleer.OhMyPosh
 winget install --id Neovim.Neovim
 ```
 
-Set it as the default `$EDITOR` (used by `git commit` and similar tools) — this only
-applies to the current session:
+Set `$EDITOR` (used by `git commit`). Session-only; add to `$PROFILE` to persist:
 ```powershell
 $env:EDITOR = "nvim"
 ```
-To persist it across sessions, add that line to your PowerShell profile (`$PROFILE`).
 
 ---
 
@@ -133,8 +118,6 @@ oh-my-posh font install
 # Linux Setup (SolusOS)
 
 ## Prerequisites
-
-Before installing the dotfiles, make sure the following dependencies are installed on Solus.
 
 ### Required packages
 
@@ -162,47 +145,36 @@ Then reboot.
 
 ## Neovim configuration
 
-The Neovim config lives at `nvim/linux` (symlinked to `~/.config/nvim` via
-`nvim.conf.yaml`) — a from-scratch setup. The full keymap/feature reference lives in
-`nvim/linux/CHEATSHEET.md`. Everything below is what it needs beyond Neovim/`vim.pack`
-itself to actually work on a fresh machine.
+Config at `nvim/linux` → `~/.config/nvim` (via `nvim.conf.yaml`). Keymap/feature reference:
+`nvim/linux/CHEATSHEET.md`. Below is what it needs beyond Neovim itself on a fresh machine.
 
-Neovim itself: **≥ 0.12** (built and tested on 0.12.5) — several things were specifically
-adjusted to work on *stable* Neovim rather than nightly, so an older release may hit the
-same class of issue again.
+Requires Neovim **≥ 0.12** (tested on 0.12.5).
 
 ### Julia (the language itself)
 
-Everything Julia-specific in the Neovim config — the LSP, Runic, `<leader>bf`/`<leader>bv`,
-the Julia snippets — assumes `julia` is already on `PATH`, regardless of which Julia
-project you're actually editing. Install via **juliaup** (the officially recommended
-installer, manages multiple Julia versions) — packaged for Solus:
+Everything Julia-specific (LSP, Runic, `<leader>bf`/`<leader>bv`, snippets) assumes `julia`
+is on `PATH`. Install via **juliaup**:
 ```bash
 sudo eopkg install juliaup
 ```
-(On another distro without a `juliaup` package, use the official installer instead:
-`curl -fsSL https://install.julialang.org | sh`.)
+Without a `juliaup` package: `curl -fsSL https://install.julialang.org | sh`.
 
 ### Core CLI tools
 
 ```bash
 sudo eopkg install tree-sitter-cli
 ```
-Required by `nvim-treesitter` (the new rewrite this config uses) to build/compile parsers.
-Also needs a working **C compiler** (`gcc`/`cc`) — virtually always already present on a dev
-machine, but worth checking (`command -v cc`).
+Required by `nvim-treesitter` to compile parsers. Also needs a C compiler — check with
+`command -v cc`.
 
 ```bash
 sudo eopkg install ripgrep fd
 ```
 Required by `mini.pick` for `<leader>ff` (find files) and `<leader>fg` (live grep).
 
-`git` and `curl` — `git` is needed both by `vim.pack` itself (cloning plugins) and at
-*runtime* by `mini.git`/`mini.diff` (sign-column markers, `<leader>go`, `:Git`) and
-LazyGit itself; `curl` is needed by `vim.pack` and by `typst-preview.nvim`/
-`markdown-preview.nvim` (both download their own pre-built preview binaries on first
-use, with no separate Node.js/Deno runtime required to run the downloaded binary
-itself). Practically always already present, not worth a dedicated install step.
+`git` and `curl` are both needed at runtime — `git` by `vim.pack`, `mini.git`/`mini.diff`
+and LazyGit; `curl` by `vim.pack` and the Typst/Markdown preview plugins, which download
+their own binaries on first use. Normally already installed.
 
 ### LSP servers (none of these auto-install)
 
@@ -222,12 +194,10 @@ asset:
 curl -L -o ~/.local/bin/tinymist https://github.com/Myriad-Dreamin/tinymist/releases/download/<VERSION>/tinymist-linux-x64
 chmod +x ~/.local/bin/tinymist
 ```
-No separate standalone `typst` CLI is needed — confirmed via `typst-preview.nvim`'s own
-README, its only listed dependency is `curl` (it bundles/downloads its own compiler
-binary on first use, same as `markdown-preview.nvim` does).
+No standalone `typst` CLI needed — `typst-preview.nvim` downloads its own compiler binary,
+and only lists `curl` as a dependency.
 
-**Julia** — needs `LanguageServer.jl` installed into its own dedicated environment (NOT
-auto-installed by `nvim-lspconfig`, despite some other LSP servers being self-installing):
+**Julia** — `LanguageServer.jl` in its own environment; not auto-installed:
 ```bash
 julia --project=~/.julia/environments/nvim-lspconfig -e 'using Pkg; Pkg.add("LanguageServer")'
 ```
@@ -236,57 +206,46 @@ Both `~/.local/bin` and `~/.julia/bin` (see Runic below) need to be on `PATH`.
 
 ### Julia tooling
 
-**Runic** (the Julia code formatter) — `Pkg.Apps.add` installs it as a standalone global
-app (not a dependency of whatever project you happen to be in), but it must be run from
-the **base/default Julia environment** — i.e. from a directory with no active
-`Project.toml` (not from inside any Julia project's directory), so it lands in the shared
-app registry rather than getting tangled up with a project-specific environment:
+**Runic** (Julia formatter) — must be installed from the base environment, i.e. a directory
+with no active `Project.toml`, so it lands in the shared app registry:
 ```bash
 cd ~ && julia -e 'using Pkg; Pkg.Apps.add("Runic")'
 ```
-Installs to `~/.julia/bin/runic` — make sure `~/.julia/bin` is on `PATH` (this machine has
-it via `~/.config/zsh/.zsh_paths`, sourced from `.zshrc` — **note**: `.zshrc`-sourced PATH
-entries are only visible to *interactive* shells, so anything checking `executable('runic')`
-non-interactively, including Neovim launched in odd ways, needs this confirmed working from
-inside a real running Neovim session, not just a terminal `command -v` check).
+Installs to `~/.julia/bin/runic`; `~/.julia/bin` must be on `PATH` (set in
+`~/.config/zsh/.zsh_paths`). That file is sourced from `.zshrc`, so it only applies to
+*interactive* shells — verify `executable('runic')` from inside a running Neovim, not just
+with `command -v`.
 
 ### LaTeX
 
-TeX Live itself (providing `pdflatex`, `latexmk`) is assumed already installed — the
-Neovim config doesn't set it up, just uses it.
+TeX Live (`pdflatex`, `latexmk`) is assumed already installed.
 
-**`latexindent`** (LaTeX formatter, bundled with TeX Live but **not functional out of the
-box** — missing Perl modules):
+**`latexindent`** — bundled with TeX Live, but needs these Perl modules to run:
 ```bash
 sudo eopkg install perl-yaml-tiny perl-file-homedir
 ```
 
-**Okular** (PDF viewer, for `vimtex` forward/inverse search — Zathura is the other common
-choice if preferred instead, also in Solus repos):
+**Zathura** (PDF viewer, for `vimtex` forward/inverse search). `zathura-mupdf` pulls in the
+`zathura` base package; without a backend plugin zathura cannot open PDFs at all:
 ```bash
-sudo eopkg install okular
+sudo eopkg install zathura-mupdf
 ```
-Inverse search (Okular → jump back to Neovim) also needs a one-time **manual GUI setting**
-in Okular itself — see `nvim/linux/CHEATSHEET.md`'s LaTeX section for the exact steps and
-command.
+Inverse search needs no setup outside Neovim — vimtex passes the editor command to zathura
+itself. See `nvim/linux/CHEATSHEET.md`'s LaTeX section.
 
 ### AI Assistant (Neovim)
 
-The `99` plugin (`<leader>9*` keymaps) shells out to a CLI AI agent per invocation. Only
-Claude is actually set up right now — switching to another provider at runtime
-(`<leader>9p`) needs that provider's own CLI installed too.
+The `99` plugin (`<leader>9*`) shells out to a CLI AI agent. Only Claude is set up;
+other providers (`<leader>9p`) need their own CLI installed.
 
-**Claude Code CLI** (`claude`), via the official native installer (not `eopkg`, not npm):
+**Claude Code CLI** — official native installer, not `eopkg` or npm:
 ```bash
 curl -fsSL https://claude.ai/install.sh | bash
 ```
-Installs to `~/.local/share/claude/versions/`, symlinked from `~/.local/bin/claude` — make
-sure `~/.local/bin` is on `PATH` (already required above for the Lua LSP/Typst LSP too).
+Installs to `~/.local/share/claude/versions/`, symlinked from `~/.local/bin/claude`.
 
-**Note**: the Claude provider always runs `claude --dangerously-skip-permissions` — this
-is hardcoded in `99`'s own source, not a config option. See
-`nvim/linux/CHEATSHEET.md`'s "AI Assistant" section for what that actually means before
-using it.
+**Note**: the Claude provider always runs `claude --dangerously-skip-permissions`,
+hardcoded in `99`'s source. See `nvim/linux/CHEATSHEET.md`'s "AI Assistant" section.
 
 ### Git tooling (Neovim)
 
@@ -299,30 +258,24 @@ sudo eopkg install lazygit
 ```bash
 sudo eopkg install font-firacode-nerd
 ```
-A Nerd Font is required for `mini.icons`' glyphs (file-type icons in `mini.pick`/`mini.files`)
-and the custom statusline's icons/separators. Any Nerd Font variant works, not specifically
-FiraCode — this is just what's on this machine. Your terminal emulator also needs to be
-configured to actually use it as its font.
+Required for `mini.icons`' glyphs and the statusline's icons/separators. Any Nerd Font
+works; the terminal emulator has to be set to use it.
 
 ## Claude Code tooling
 
-`claude.conf.yaml` is the odd one out: instead of linking a config file, it links an
-executable into `~/.local/bin`.
+`claude.conf.yaml` links an executable into `~/.local/bin` instead of a config file.
 
 ```bash
 ./install claude.conf.yaml
 ```
 
-- `claude/claude-session` — lists, renames, opens, removes and restores Claude Code
-  session transcripts (the `.jsonl` files under `~/.claude/projects/`). Removals go to
-  `~/.claude/.session-trash`, so they can be undone. Run `claude-session` with no
-  arguments for the full usage text.
+- `claude/claude-session` — list, rename, open, remove and restore Claude Code session
+  transcripts (`~/.claude/projects/*.jsonl`). Removals go to `~/.claude/.session-trash`
+  and can be undone. Run with no arguments for usage.
 
-Needs Python 3 (already a prerequisite for dotbot) and `~/.local/bin` on `PATH` — on
-SolusOS the system profile adds it, so nothing in `zsh/.zsh_paths` does.
-
-This manifest sets `force: true`, which the others don't: the script normally already
-exists at the destination as a real file, and dotbot refuses to overwrite one without it.
+Needs Python 3 and `~/.local/bin` on `PATH` (added by the SolusOS system profile, not by
+`zsh/.zsh_paths`). The manifest sets `force: true` because the destination is normally a
+real file, which dotbot won't overwrite otherwise.
 
 ## Recommended Modules
 ### Dashboard
@@ -337,22 +290,14 @@ sudo eopkg install fastfetch cava
 
 #### cbonsai
 
-`cbonsai` is a terminal-based bonsai tree generator written in C using `ncurses`.
-
-Repository:
-
-```text
-https://gitlab.com/jallbrit/cbonsai
-```
-
-Install required dependencies:
+Terminal bonsai tree generator — https://gitlab.com/jallbrit/cbonsai
 
 ```bash
 sudo eopkg install make ncurses-devel
 sudo eopkg install -c system.devel
 ```
 
-Clone and install:
+Build:
 
 ```bash
 git clone https://gitlab.com/jallbrit/cbonsai
@@ -363,22 +308,14 @@ sudo make install
 
 #### wmctrl
 
-`wmctrl` is a command-line utility to interact with X11-compatible window managers.
-
-Repository:
-
-```text
-https://github.com/Conservatory/wmctrl
-```
-
-Install required dependencies:
+CLI for X11-compatible window managers — https://github.com/Conservatory/wmctrl
 
 ```bash
 sudo eopkg install libx11-devel libxmu-devel glib2-devel
 sudo eopkg install -c system.devel
 ```
 
-Clone and install:
+Build:
 
 ```bash
 git clone https://github.com/Conservatory/wmctrl.git
@@ -390,8 +327,7 @@ sudo make install
 
 ## Personal Notes (Author)
 
-Miscellaneous personal setup steps for this author's own machines — not general bootstrap
-instructions, kept here for reference when setting up a new one.
+Personal setup steps for this author's own machines, not general bootstrap instructions.
 
 **Extra `eopkg` repository** (needed for some of the apps below):
 ```bash
@@ -406,15 +342,15 @@ sudo eopkg ar Hedron https://hedron.friesischscott.de/eopkg-index.xml.xz
 
 ### Noctalia Greeter
 
-`noctalia-greeter` (from the Hedron repo above) is a greetd login screen matching Noctalia
-Shell. Nothing here is dotbot-managed — it all lives under `/etc` and `/var/lib`.
+`noctalia-greeter` (Hedron repo above) is a greetd login screen matching Noctalia Shell.
+Not dotbot-managed — it lives under `/etc` and `/var/lib`.
 
 ```bash
 sudo eopkg install noctalia-greeter
 ```
 
-1. **Seed greetd's config into `/etc`.** Solus is stateless: packages ship their vendor
-   defaults under `/usr/share/defaults/`, and `/etc` holds the machine's overrides
+1. **Seed greetd's config into `/etc`.** Solus is stateless: vendor defaults live under
+   `/usr/share/defaults/`, `/etc` holds the overrides
    (https://help.getsol.us/docs/user/software/configuration_files/).
    ```bash
    sudo mkdir -p /etc/greetd
@@ -437,13 +373,11 @@ sudo eopkg install noctalia-greeter
    sudo mkdir -p /etc/pam.d
    sudo cp -a /usr/share/defaults/etc/pam.d/greetd /etc/pam.d/greetd
    ```
-   libpam itself falls back to `/usr/share/defaults/etc/pam.d/` — which is why the whole
-   system authenticates fine with no `/etc/pam.d` at all — but greetd pre-checks for its
-   service file in `/etc/pam.d/` and `/usr/lib/pam.d/` *only*, and exits before PAM is ever
-   consulted. Symptom if skipped: **black screen after reboot**, with greetd restart-looping
-   (`error: PAM 'greetd' service missing`, then `start-limit-hit`) — visible via
-   `journalctl -b -1 -u greetd`. The copied file needs no edits: it includes
-   `system-local-login` → `system-login`, which already has `pam_systemd`.
+libpam falls back to `/usr/share/defaults/etc/pam.d/`, but greetd pre-checks
+   `/etc/pam.d/` and `/usr/lib/pam.d/` *only* and exits before PAM is consulted. Symptom if
+   skipped: **black screen after reboot**, greetd restart-looping (`error: PAM 'greetd'
+   service missing`, then `start-limit-hit`) — see `journalctl -b -1 -u greetd`. The copied
+   file needs no edits.
 
 3. **Create the greeter's state files** — `greeter.toml` and `sync.toml` under
    `/var/lib/noctalia-greeter`, owned by `greeter`. Run this *after* step 1, since it reads
@@ -451,20 +385,18 @@ sudo eopkg install noctalia-greeter
    ```bash
    sudo GREETER_USER=greeter /usr/bin/noctalia-greeter-apply-appearance --setup-system
    ```
-   Don't use the package's own `/usr/share/noctalia-greeter/setup_greeter_system.sh` here:
-   it wraps the same call but also runs a PAM patch step that, on Solus, appends a duplicate
-   `pam_systemd` line to the file copied in step 2.
+Don't use `/usr/share/noctalia-greeter/setup_greeter_system.sh` — it also runs a PAM
+   patch step that appends a duplicate `pam_systemd` line to the file from step 2.
 
 4. **Take over from LightDM**, then reboot:
    ```bash
    sudo systemctl disable lightdm
    sudo systemctl enable greetd
    ```
-   `enable` writes `/etc/systemd/system/display-manager.service`, which overrides the vendor
-   symlink `/usr/lib/systemd/system/display-manager.service` → `lightdm.service`. Verify with
+`enable` writes `/etc/systemd/system/display-manager.service`, overriding the vendor
+   symlink to `lightdm.service` — verify with
    `readlink -f /etc/systemd/system/display-manager.service`. Don't `systemctl start greetd`
-   from a running graphical session — it wants VT 1 and conflicts with `getty@tty1` while
-   LightDM still holds the display.
+   from a graphical session; it wants VT 1.
 
 **Recovery** — if the screen comes up black, Ctrl+Alt+F2 gives a TTY (greetd only takes
 VT 1):
@@ -472,18 +404,10 @@ VT 1):
 sudo systemctl disable greetd && sudo systemctl enable lightdm && sudo reboot
 ```
 
-**Customizing**: `/var/lib/noctalia-greeter/greeter.toml` is the declarative, hand-edited
-one — the greeter UI and appearance sync never write to it. Use `sudoedit` so it stays
-`greeter:greeter`. Its generated comments document every key; the sections are
-`[appearance]` (`scheme`, `theme_mode`, `password_style`, `hide_logo`,
-`power_buttons_position`, `scheme_selector_position`, `corner_radius_scale`,
-`font_family`), `[appearance.palette]`, `[appearance.wallpaper]`,
-`[appearance.wallpapers.<connector>]` (connector names from `noctalia-greeter outputs`),
-`[auth]`, `[keyboard]`, `[output]`, `[idle]`, `[cursor]`, `[session]` and `[user]`.
-
-`sync.toml` in the same directory is the opposite — written by the greeter UI and by
-appearance sync, so don't hand-edit it. The power menu (`[session.power]`,
-`[[session.actions]]`) lives there and isn't settable in `greeter.toml`.
+**Customizing**: `/var/lib/noctalia-greeter/greeter.toml` is the hand-edited one — edit
+with `sudoedit` so it stays `greeter:greeter`. Its generated comments document every key.
+`sync.toml` beside it is written by the greeter UI and appearance sync, so don't hand-edit
+it; the power menu (`[session.power]`, `[[session.actions]]`) lives there only.
 
 **Syncing the shell's theme to the greeter** — wallpaper, palette and monitor
 layout/scales/transforms, from the desktop session (not from a TTY):
@@ -491,15 +415,14 @@ layout/scales/transforms, from the desktop session (not from a TTY):
 noctalia msg greeter-sync
 ```
 
-This needs a polkit agent, and noctalia's is off by default — without one the sync dies at
-authorization with no dialog and nothing on stdout, logging only `Error creating textual
-authentication agent`. Enable it in `noctalia/config/20-shell.toml`, under `[shell]`:
+Needs a polkit agent; noctalia's is off by default. Without one the sync dies at
+authorization silently, logging only `Error creating textual authentication agent`. Enable
+in `noctalia/config/20-shell.toml`, under `[shell]`:
 ```toml
 polkit_agent = true
 ```
 
-For automatic syncing on every theme change, plus no password prompt each time — same file,
-as a table at the end:
+Automatic sync on every theme change, without a password prompt — same file:
 ```toml
 [shell.greeter_sync]
 auto_sync = true
@@ -509,9 +432,8 @@ noctalia msg config-reload
 sudo /usr/bin/noctalia-greeter passwordless-sync enable <user>
 ```
 
-`msg` answers `ok` as soon as the daemon accepts the command, so check the log, not the
-terminal — grep first and tail the *matches*, since `tail | grep` misses it on a log this
-chatty:
+`msg` answers `ok` as soon as the daemon accepts the command, so check the log. Grep
+first and tail the *matches* — `tail | grep` misses it on a log this chatty:
 ```bash
 grep 'greeter-sync' ~/.cache/noctalia/noctalia.log | tail -8
 ```
@@ -534,12 +456,8 @@ Success ends in `synced shell appearance to greeter`.
    mv rslsync ~/.local/share/resilio-sync
    ```
 
-4. Create the systemd user service:
-   ```bash
-   mkdir -p ~/.config/systemd/user
-   nano ~/.config/systemd/user/resilio-sync.service
-   ```
-   Paste (replacing `YOUR_USERNAME` with your actual Linux username):
+4. Create the systemd user service at `~/.config/systemd/user/resilio-sync.service`,
+   replacing `YOUR_USERNAME`:
    ```ini
    [Unit]
    Description=Resilio Sync Service (per-user)
@@ -561,7 +479,7 @@ Success ends in `synced shell appearance to greeter`.
    systemctl --user start resilio-sync.service
    ```
 
-6. Enable lingering, so the user service also starts automatically after reboot/login:
+6. Enable lingering so it starts after reboot:
    ```bash
    sudo loginctl enable-linger YOUR_USERNAME
    ```
