@@ -1,20 +1,14 @@
 # Neovim Cheatsheet — Custom Config
 
-Everything in this file is **new** on top of vanilla Vim/Neovim — plain motions, operators,
-registers, etc. aren't repeated here. Organized by feature area, in the order it was added.
-Kept up to date as the config grows; see `~/.config/nvim/lua/cincinperin/` for the actual
-source of truth if anything here ever looks stale.
+Everything here is **new** on top of vanilla Vim/Neovim. Source of truth:
+`~/.config/nvim/lua/cincinperin/`.
 
 Leader = `<Space>`. Local-leader = `\`.
 
 ## Personal Cheatsheet Popup (`lua/cincinperin/misc/help.lua`)
 
-`<leader>h` opens a floating quick-reference of every custom command in this config,
-grouped by area (Buffers, Tabs, Terminal, Send to Terminal, Formatting, Julia, LaTeX,
-Typst, Markdown, Git, Search, Multicursor, Finding Things, Undo History, Misc). Close
-with `q` or `<Esc>`. Not a replacement for this file — this is the fast, scannable
-version for "what was that key again?" while actually editing; this file has the full
-prose/rationale/gotchas. Keep both in sync when a keymap changes.
+`<leader>h` opens a floating quick-reference of every custom command, grouped by area.
+Close with `q` or `<Esc>`. Keep it in sync with this file when a keymap changes.
 
 ## Buffers & Windows
 
@@ -32,10 +26,7 @@ prose/rationale/gotchas. Keep both in sync when a keymap changes.
 | `Ctrl-w s` / `:split` | *(vanilla Vim)* Open a horizontal split |
 | `Ctrl-w h/j/k/l` | *(vanilla Vim)* Move focus between splits — new splits open below/right by default now (`splitbelow`/`splitright`) |
 
-Decided to stick with vanilla split commands rather than adding `mini.files`-specific
-split-and-open mappings (ronisbr doesn't have those either — he also just uses plain
-`Ctrl-w`). Workflow for opening two files side by side: `Ctrl-w v` to split, then `<leader>e`
-in the new window to browse to the second file.
+Two files side by side: `Ctrl-w v` to split, then `<leader>e` in the new window.
 
 ## Editing & Misc
 
@@ -44,7 +35,7 @@ in the new window to browse to the second file.
 | `<Esc>` (normal mode) | Clear search highlighting (in addition to leaving insert mode) |
 | `↑` / `↓` (normal, visual, insert) | Move by *visual* line (`gk`/`gj`) instead of logical line — only matters when `wrap` is on and a line spans multiple screen rows |
 | `<leader>ac` | Copy `file:line` of the cursor position to the clipboard (e.g. for pasting a reference into a chat) |
-| `<C-j>` (normal, insert) | Jump to and select the next `<++>` placeholder marker — not useful yet, no snippets exist to place them (pending `mini.snippets`) |
+| `<C-j>` (normal, insert) | Jump to and select the next `<++>` placeholder marker |
 
 ## Editor Behavior (no keymap — just how things behave differently now)
 
@@ -64,18 +55,12 @@ in the new window to browse to the second file.
 
 ## Spellcheck
 
-`spelllang = "en"` is set globally (`set.lua`), and its dictionary file
-(`en.utf-8.spl`, ~600KB) auto-downloads from the Vim runtime repository the first
-time it's missing — one-time cost, checked (cheaply) on every startup after that.
-Spell-check itself is **off by default** everywhere (matches ronisbr's own config) —
-turn it on per-buffer with `:set spell`, or `:set nospell` to turn back off.
+`spelllang = "en"` globally (`set.lua`); the dictionary (`en.utf-8.spl`, ~600KB)
+auto-downloads on first use. Spell-check is **off by default** — `:set spell` per buffer.
 
-Only the generic "en" dictionary is used, not a region-specific one (`en_gb`,
-`en_us`, etc.) — confirmed the Vim runtime repository doesn't actually distribute
-pre-built regional dictionaries, only `.diff` patches meant for building one from
-Hunspell source files via `:mkspell`, and the official recipe for obtaining that
-source data points to a URL that's been dead for years. Revisit if a reliable
-`en_GB` dictionary source ever turns up.
+Generic "en" only: the Vim runtime repo ships no pre-built regional dictionaries
+(`en_gb`, `en_us`), just `.diff` patches for `:mkspell` against a source that's been
+dead for years.
 
 | Key | Does *(vanilla Vim, once `:set spell` is on)* |
 |---|---|
@@ -96,9 +81,8 @@ Automatic behavior, no keymaps to remember — except one: **`q`** now closes se
 
 ## Multicursor (`multicursors.nvim`)
 
-Neovim 0.12.5 doesn't have the native multicursor feature ronisbr uses (nightly-only, 0.13+),
-so this is a third-party plugin instead (`smoka7/multicursors.nvim` + its dependency
-`nvimtools/hydra.nvim`).
+Stable Neovim has no native multicursor, so: `smoka7/multicursors.nvim` +
+`nvimtools/hydra.nvim`.
 
 | Key | Does |
 |---|---|
@@ -108,16 +92,12 @@ so this is a third-party plugin instead (`smoka7/multicursors.nvim` + its depend
 | `i` / `a` / `c` / `d` (inside multicursor mode) | Insert / append / change / delete — applies to every active selection simultaneously |
 | `<Esc>` (inside multicursor mode) | Clear selections, back to normal mode |
 
-Much more available inside multicursor mode (align selections, macros, tree-sitter-aware
-extend mode, etc.) — see `:h multicursors` once installed.
+More inside multicursor mode (align, macros, tree-sitter extend): `:h multicursors`.
 
 ## Terminal
 
-Custom module (`lua/cincinperin/misc/terminal.lua`), a simplified port of ronisbr's — using
-`zsh` (not his `nu`/nushell). Three independent, persistent terminal sessions — closing/
-hiding one doesn't kill its shell or affect the others, reopening resumes the same session.
-The floating terminal shares the `misc/float.lua` module below (backdrop + theme-tinted
-background).
+`lua/cincinperin/misc/terminal.lua`. Three independent, persistent `zsh` sessions —
+hiding one doesn't kill its shell; reopening resumes it.
 
 | Key | Does |
 |---|---|
@@ -130,19 +110,13 @@ background).
 | `<leader>ts` (normal: buffer; visual: selection) | Send buffer/selection text to the **right** terminal specifically, without switching focus to it |
 | `<leader>ti` | Same as `<leader>ts`, but also focuses the right terminal afterward |
 
-`<leader>ts`/`<leader>ti` (and Julia's `<leader>bf`, see Julia section) always target the
-right terminal only — the bottom terminal is a separate, independent shell, nothing sends
-code to it automatically. This is a deliberate choice, not a limitation: simpler mental
-model, one terminal is always "the REPL," the other is just a spare terminal.
+`<leader>ts`/`<leader>ti` (and Julia's `<leader>bf`) always target the **right** terminal.
+The bottom one is a spare shell; nothing is ever sent to it.
 
 ## Git — LazyGit (`lua/cincinperin/misc/lazygit.lua`)
 
-Floating lazygit, theme-synced to the active colorscheme (regenerates automatically on
-`:colorscheme` change) — shares the same `misc/float.lua` backdrop+tinting module as the
-floating terminal above, for visual consistency. Commit authors all render in one consistent,
-legible color (`Normal`'s real foreground) instead of LazyGit's default behavior of assigning
-a random color per author — ronisbr's own config doesn't set this either, so this is a
-standalone fix, not something ported from him.
+Floating lazygit, theme-synced to the active colorscheme. Commit authors all render in
+one legible color instead of LazyGit's random per-author colors.
 
 | Key / Command | Does |
 |---|---|
@@ -151,21 +125,14 @@ standalone fix, not something ported from him.
 
 ## Shared floating-window helper (`lua/cincinperin/misc/float.lua`)
 
-Not a feature by itself — infrastructure shared by the floating terminal and lazygit (and
-anything else built as a floating window later). Gives a backdrop window (dimmed padding)
-behind the content window, with both tinted to a color derived from the active colorscheme:
-lightened for dark themes, darkened toward warm tones for light ones. Since the main editor
-intentionally uses a transparent background (`bg=none`, for terminal transparency), the tint
-is derived from `Pmenu`'s background instead of `Normal`/`NormalFloat` — `Pmenu` stays solid
-in every installed colorscheme, giving the tinting math a real color to work from. This only
-affects floats built through this module; other floats (`mini.pick`, `mini.files`, LSP hover,
-`mini.clue`, ...) are untouched and remain transparent as before.
+Infrastructure shared by the floating terminal and lazygit: a dimmed backdrop window plus
+a content window, both tinted from the active colorscheme. The tint comes from `Pmenu`'s
+background, not `Normal` — the editor runs transparent (`bg=none`), so `Normal` has no real
+color to work from. Other floats (`mini.pick`, `mini.files`, LSP hover) stay transparent.
 
 ## Search
 
-`hlsearch` is on (changed from the original tutorial config's `false`, specifically to make
-`hlslens` useful) — search matches stay highlighted after a search until cleared (`<Esc>`, per
-the existing `remap.lua` mapping, or `:noh`).
+`hlsearch` is on — matches stay highlighted until cleared (`<Esc>` or `:noh`).
 
 | Key | Does |
 |---|---|
@@ -228,31 +195,23 @@ Needs `ripgrep` + `fd` installed (done).
 
 ## Which-Key Popup (`mini.clue`)
 
-Press and hold **`<leader>`**, **`g`**, a mark key (`` ` ``/`'`/`"`), `Ctrl-w`, or `z`, and pause —
-a popup shows every mapping that follows from there, both custom and Neovim built-ins (e.g.
-`gq`/`gw` for formatting and `gc`/`gcc` for commenting show up automatically here too — no
-config needed, `mini.clue` discovers real mappings on its own, not just an explicit list).
-Popup window width set to `"auto"` (was a fixed 30 columns by default, truncating most
-descriptions with `...`).
+Press and hold **`<leader>`**, **`g`**, a mark key (`` ` ``/`'`/`"`), `Ctrl-w` or `z` and
+pause — a popup shows every mapping that follows, custom and built-in alike (it discovers
+real mappings, so `gq`, `gc` etc. appear with no config). Width set to `"auto"`.
 
 ## Command Line (`mini.cmdline`)
 
-Automatic — no keymaps, just a better `:` experience. Bare defaults, nothing configured.
+Automatic, no keymaps. Bare defaults.
 
-- Autocomplete popup as you type a command (enhances vanilla `<Tab>`-completion) — popup
-  height capped to 10 rows while the cmdline is open (uncapped again in insert-mode
-  completion elsewhere).
-- Autocorrects mistyped words that must come from a fixed set (command names, options).
-- Typing a range (e.g. `:10,20` or `:%`) shows a floating peek of those lines before you
-  hit Enter.
+- Autocomplete popup as you type a command, capped to 10 rows.
+- Autocorrects mistyped command names and options.
+- Typing a range (`:10,20`, `:%`) shows a floating peek of those lines.
 
 ## Completion (`mini.completion`)
 
-Automatic in insert mode — no trigger key, a popup appears as you type after 700ms idle
-(tuned up from the 100ms default so it doesn't beat a snippet prefix's `<Tab>` to the
-punch, e.g. typing `env<Tab>` fast enough now expands instead of the popup stealing that
-`<Tab>` to navigate itself). If you ever get a popup open mid-typing and just want it
-gone, `<C-e>` cancels it and restores what you actually typed.
+Automatic in insert mode: popup after **700ms** idle (up from the 100ms default, so a
+snippet prefix like `env<Tab>` expands instead of the popup stealing that `<Tab>`).
+`<C-e>` cancels it.
 
 | Key | Does |
 |---|---|
@@ -262,11 +221,9 @@ gone, `<C-e>` cancels it and restores what you actually typed.
 | `<C-y>` | Confirm/accept selection |
 | `<C-e>` | Cancel, close the popup |
 
-An active snippet session always wins `<Tab>`/`<S-Tab>` over the completion popup, even if
-the popup happens to be open (it auto-triggers while typing plain text inside a
-placeholder) — otherwise `<Tab>` would silently navigate the incidental popup instead of
-jumping the tabstop. Confirmed by testing real keystroke-by-keystroke via RPC, not just
-reading the code.
+An active snippet session always wins `<Tab>`/`<S-Tab>` over the completion popup, which
+auto-triggers while typing inside a placeholder — otherwise `<Tab>` would navigate that
+incidental popup instead of jumping the tabstop.
 
 ## Snippets (`mini.snippets`)
 
@@ -274,8 +231,7 @@ Filetype-scoped — `snippets/latex.json` only loads in `.tex`/`.plaintex` files
 `snippets/julia.json` only in `.jl` files. Triggered by `<Tab>` above — type the prefix,
 hit `<Tab>` to expand, `<Tab>`/`<S-Tab>` to move between placeholders.
 
-### LaTeX (ported from ronisbr's 7 general-purpose ones; his Julia snippets were mostly
-personal, see below for the 2 that were worth keeping)
+### LaTeX (`snippets/latex.json`)
 
 | Prefix | Expands to |
 |---|---|
@@ -294,10 +250,8 @@ then type the prefix and `<Tab>` to wrap the selection.
 
 | Prefix | Expands to |
 |---|---|
-| `desc` | A boxed `#`-banner "Description" comment section (ported verbatim from ronisbr) |
-| `IRZ` | Full file header: institution/department/location lines, `Author:` line, then the same Description banner as `desc` — tailored with your own name/email/affiliation, not a port (ronisbr's `inpe-header` had his own identity hardcoded, so this was rebuilt from scratch for you) |
-
-Skipped `makieaxisconf` (Makie.jl plot-styling boilerplate — this project doesn't use Makie).
+| `desc` | A boxed `#`-banner "Description" comment section |
+| `IRZ` | Full file header: institution/department/location, `Author:` line, then the `desc` banner |
 
 ## Git (`mini.diff` + `mini.git`)
 
@@ -318,11 +272,6 @@ Only active on files inside a git repo with commit history.
 | `<leader>cw` | `mini.trailspace` | Trim trailing whitespace from the buffer |
 | `ga` then a char (visual mode) | `mini.align` | Interactive alignment on that character, e.g. `ga=` aligns on `=` |
 | `<leader>xb` (custom, `remap.lua`) | — | Converts 2 lines into a centered box: line 1 = fill/border pattern (e.g. `*`), line 2 = text to center, both padded to column 92 |
-
-Ported two sibling commands from ronisbr (`<leader>xa`/`<leader>xf`, character-fill/left-align
-macros) but removed them — `xa` had a real correctness bug (destroyed line content on
-realistic input, root cause never fully pinned down) and `xf`, while working, wasn't judged
-useful enough to keep. `xb` is the one genuinely valuable, confirmed-working piece.
 
 ## Visual Aids
 
@@ -348,8 +297,8 @@ useful enough to keep. `xb` is the one genuinely valuable, confirmed-working pie
 
 ## LaTeX (`vimtex`)
 
-PDF viewer: **Okular** (installed via `eopkg install okular`). vimtex loads only when a
-`.tex` file is opened (lazy, on filetype). `conceallevel = 0` locally — LaTeX syntax
+PDF viewer: **Zathura** (`eopkg install zathura-mupdf`). vimtex loads only when a `.tex`
+file is opened (lazy, on filetype). `conceallevel = 0` locally — LaTeX syntax
 (e.g. `\alpha`, math delimiters) is never hidden behind rendered symbols.
 
 Default mappings live under `<localleader>` = `\`:
@@ -357,28 +306,26 @@ Default mappings live under `<localleader>` = `\`:
 | Key | Does |
 |---|---|
 | `\ll` | Compile (`latexmk`, non-continuous — you trigger each compile manually) |
-| `\lv` | Forward search: open/jump to the current cursor location in Okular |
+| `\lv` | Forward search: open/jump to the current cursor location in Zathura, highlighting the target line |
 | `\lt` | Toggle the table-of-contents sidebar |
 | `\lc` | Clean auxiliary build files |
 | `\le` | Show compilation errors (quickfix list) |
-| `<leader>cf` | Format the current buffer with **`latexindent`** (TeX Live's bundled formatter — needed `perl-yaml-tiny`/`perl-file-homedir` installed via `eopkg` first, wasn't functional out of the box) |
+| `<leader>cf` | Format with **`latexindent`** (needs `perl-yaml-tiny`/`perl-file-homedir`) |
 | (automatic) | `latexindent` also runs on every `:w` of a `.tex` file, same as Julia's Runic |
 
-**Inverse search** (Okular → jump back to the source line in Neovim): one-time manual setup
-required in Okular itself (can't be done from the Neovim config side) —
+**Inverse search** (Zathura → jump back to the source line in Neovim): **Ctrl+Click** in the
+PDF. No zathura config needed — vimtex passes the editor command via `zathura -x`.
 
-1. Okular → Settings → Configure Okular → Editor → set editor to **Custom Text Editor**, with
-   command:
-   ```
-   nvim --headless -c "packadd vimtex" -c "VimtexInverseSearch %l '%f'"
-   ```
-   (`packadd` is required: Okular spawns a second, headless nvim, where vimtex's lazy
-   `FileType tex` load never happens in time — so the command wouldn't exist. Opening the
-   file with `"%f"` instead does *not* work; that load is scheduled, and `-c` runs first.)
-2. In Okular, switch to Browse mode (`Ctrl+1`, Tools menu — this is also the default mouse
-   mode), then **Shift+Click** on text in the PDF to jump back to that line in Neovim. A plain
-   click/drag in this mode pans the page rather than selecting text — that's expected, not a
-   bug; text selection needs the separate Selection tool (`Ctrl+2`).
+Two settings in `plugins/vimtex.lua` make that work:
+
+```lua
+vim.g.vimtex_view_method = "zathura"
+vim.g.vimtex_callback_progpath = "nvim -c 'packadd vimtex'"
+```
+
+`packadd` is required: the inverse search runs in a second, headless nvim where vimtex's
+lazy `FileType tex` load never happens, so `VimtexInverseSearch` wouldn't exist. Everything
+SyncTeX resolves is a line box, so the highlight is a line, never a single word.
 
 ## Typst (`typst-preview.nvim` + `after/ftplugin/typst.lua`)
 
@@ -394,48 +341,33 @@ use downloads its preview binaries via `curl` — give it a moment the very firs
 | `:TypstPreviewFollowCursor` / `:TypstPreviewNoFollowCursor` | Toggle whether the preview auto-scrolls as you move the cursor (on by default) |
 | `<leader>cc` | Compile to a standalone PDF (`typst compile`, not the live preview) — auto-saves first if the buffer has unsaved changes, since compiling reads from disk. Errors from a bad compile show via `vim.notify` with the full compiler output |
 
-Preview updates live as you type, and clicking in the preview jumps the cursor to the
-corresponding place in the source (cross-jump, similar in spirit to vimtex's forward/inverse
-search, but automatic/bidirectional rather than a manual keypress). `<leader>cc` is separate
-from the preview — it's for when you want an actual `.pdf` file on disk, independent of
-whether the preview is running.
+Preview updates live, and clicking in it jumps the cursor to the matching source position
+— bidirectional and automatic, unlike vimtex's manual forward/inverse search.
 
 ## Markdown (`render-markdown.nvim` + `markdown-preview.nvim`)
 
 Both load only when a `.md` file is opened (lazy, on filetype).
 
-**Prose-editing settings** (`after/ftplugin/markdown.lua`, always active regardless of the
-two plugins above): `wrap`/`linebreak`/`breakindent` on (global default is `wrap = false`
-everywhere else) — long lines soft-wrap at word boundaries, wrapped continuation lines
-show a `↳ ` marker and match the original line's indent. `textwidth = 0` (no hard column
-limit) and `colorcolumn` cleared, since prose isn't meant to hit a fixed line-length target
-the way code is. `shiftwidth`/`tabstop = 2`, matching the config's other prose/markup
-filetypes.
+**Prose-editing settings** (`after/ftplugin/markdown.lua`): `wrap`/`linebreak`/`breakindent`
+on (global default is `wrap = false`), wrapped lines marked with `↳ `. `textwidth = 0` and
+`colorcolumn` cleared. `shiftwidth`/`tabstop = 2`.
 
-**In-buffer prettification** (`render-markdown.nvim`), automatic, no keymaps: headers get
-bold/colored styling with icons, bullet points render as actual bullets, fenced code
-blocks get a boxed background, checkboxes (`- [ ]` / `- [x]`) render as real checkbox
-glyphs — all using the plugin's default styling.
+**In-buffer prettification** (`render-markdown.nvim`), automatic: styled headers, real
+bullets, boxed code blocks, checkbox glyphs.
 
-**Live browser preview** (`markdown-preview.nvim`), same idea as Typst's `<leader>ct`
-above:
+**Live browser preview** (`markdown-preview.nvim`):
 
 | Key / Command | Does |
 |---|---|
 | `<leader>cm` | Toggle a live preview in your default browser, synced scroll as you move the cursor |
 | `:MarkdownPreview` / `:MarkdownPreviewStop` | Start / stop directly |
 
-First use downloads a pre-built preview-server binary (~17MB, via `curl` — same one-time-cost
-pattern as Typst/vimtex's own first-run downloads); after that it's instant. Supports
-KaTeX math and Mermaid diagrams out of the box. Unlike Typst's preview, this is one-way
-sync only (cursor → preview scroll) — no click-in-browser-to-jump-to-source, that's a
-Typst-specific feature its tooling happens to support.
+First use downloads a ~17MB preview-server binary via `curl`. KaTeX and Mermaid work out
+of the box. One-way sync only (cursor → preview scroll).
 
 ## AI Assistant (`99`)
 
-Shells out to a real CLI AI agent per invocation (not a persistent chat/background
-process) — one-shot: you trigger it, it runs, result comes back. Loads on `later`
-(non-blocking startup, same tier as most other plugins).
+Shells out to a CLI AI agent per invocation — one-shot, not a persistent chat.
 
 | Key | Does |
 |---|---|
@@ -452,19 +384,13 @@ Switch to `OpenCodeProvider`/`CursorAgentProvider`/`GeminiCLIProvider`/`KiroProv
 time with `<leader>9p`, no restart needed — each needs its own CLI tool installed and on
 `PATH` to actually work (only `claude` is set up so far).
 
-**Real safety note, not hypothetical**: the Claude provider always runs `claude
---dangerously-skip-permissions` — this is hardcoded in `99`'s own source, not something a
-config option can turn off. Every `<leader>9v`/`<leader>9s` call through it is a one-shot,
-fully-autonomous subprocess for that single invocation — no per-action confirmation for
-file edits or shell commands it decides to run while satisfying that one request. Consciously
-accepted, not an oversight — matters if you're about to trigger it on something sensitive.
+**Safety note**: the Claude provider always runs `claude --dangerously-skip-permissions`,
+hardcoded in `99`'s source and not switchable. Every `<leader>9v`/`<leader>9s` is a fully
+autonomous subprocess — no confirmation for file edits or shell commands it runs.
 
-The `<leader>9m`/`<leader>9p` pickers are a small custom module
-(`lua/cincinperin/misc/ninetynine_pickers.lua`) built on `99`'s own
-`99.extensions.pickers` data/apply logic (the same one its telescope/fzf-lua extensions
-use) — only the picker UI itself is swapped for `vim.ui.select`, already routed to
-`MiniPick.ui_select` elsewhere in this config, so no new fuzzy-finder dependency was added
-just for this.
+The `<leader>9m`/`<leader>9p` pickers are a custom module
+(`lua/cincinperin/misc/ninetynine_pickers.lua`) over `99.extensions.pickers`, swapping only
+the UI for `vim.ui.select`.
 
 ## Language Servers (LSP)
 
@@ -491,15 +417,11 @@ handled by `vimtex` directly, coming in a later phase. No `clangd` (not needed, 
 | `:LspLog` | Open the Nvim LSP client log in a new tab |
 | `:LspJuliaActivateEnv [path]` | (Julia only) switch which Julia project environment the language server uses |
 
-Completion popups (`mini.completion`, already documented above) now also pull in real
-LSP-backed suggestions on top of buffer words.
-
 ## Startup
 
-`mini.starter` shows a customized dashboard automatically when you run `nvim` with no file
-argument: a centered "N" logo, a footer with the loaded-plugin count and startup time (in
-ms), and a bulleted action list. Navigate by typing letters to fuzzy-filter, arrows/`<C-n>`/
-`<C-p>`, or clicking; `<CR>` to run the highlighted action.
+`mini.starter` shows a dashboard when `nvim` runs with no file argument: centered "N" logo,
+footer with plugin count and startup time, action list. Filter by typing, or `<C-n>`/`<C-p>`;
+`<CR>` runs the highlighted action.
 
 | Action | Runs |
 |---|---|
@@ -514,21 +436,16 @@ ms), and a bulleted action list. Navigate by typing letters to fuzzy-filter, arr
 
 Below the actions: your 8 most recent files, listed directly.
 
-Startup is staged via `mini.misc`'s scheduler (`now`/`later`/`on_event`/`on_filetype`,
-matching ronisbr's own pattern): colors, tree-sitter, `mini.files`, and `mini.starter`
-itself are ready immediately; most of `mini.nvim` (pick, clue, completion, diff, git,
-etc.), LSP, hlslens, and multicursors load right after, without blocking the first paint;
-`mini.snippets`/`mini.cmdline` don't load at all until you actually enter Insert/Cmdline
-mode for the first time in a session; markdown/typst/vimtex only load on the first buffer
-of that filetype. Nothing about how these features work changed, only when they load —
-the practical effect is a faster-feeling startup and `mini.clue`'s which-key popup now
-correctly appears on the `mini.starter` dashboard itself (previously silently didn't).
+Startup is staged via `mini.misc`'s scheduler (`now`/`later`/`on_event`/`on_filetype`):
+colors, tree-sitter, `mini.files` and `mini.starter` immediately; most of `mini.nvim`, LSP,
+hlslens and multicursors right after, without blocking first paint; `mini.snippets`/
+`mini.cmdline` on first Insert/Cmdline use; markdown/typst/vimtex on the first buffer of
+that filetype.
 
 ## Statusline (`lua/cincinperin/misc/statusline.lua`)
 
-Custom statusline, ported from ronisbr, colors pulled live from whatever colorscheme is
-active (see Colorschemes section — switches with `:colorscheme <name>`, statusline
-recolors automatically). No keymaps — purely informational, left to right:
+Colors pulled live from the active colorscheme, recolored on `:colorscheme`. Left to
+right:
 
 | Segment | Shows |
 |---|---|
@@ -545,22 +462,13 @@ recolors automatically). No keymaps — purely informational, left to right:
 | Cursor position | Column:line and scroll percentage |
 | Tab list | Only shown with 2+ tabs open — `[1 | 2 | 3]`, current tab highlighted |
 
-Read-only buffers and the quickfix list get their own simplified renders instead of the
-above. `mini.starter`'s dashboard has no statusline at all (hidden by filetype).
-
-Adapted, not a literal copy, in one place: ronisbr's multicursor badge reads Neovim's
-*native* nightly multicursor state (which also has a "follow mode" with a different badge
-color) — we use the `multicursors.nvim` plugin instead (stable Neovim has no native
-multicursor yet), which has no follow-mode concept, so the badge here only ever has the
-one color variant and just shows a cursor count.
+Read-only buffers and the quickfix list get simplified renders; `mini.starter`'s dashboard
+has no statusline at all.
 
 ## Julia Syntax Highlighting Extension (`after/queries/julia/highlights.scm`)
 
-Automatic, no keymap — extends (not replaces) the base Julia tree-sitter highlight query with
-3 extra captures: assignment targets (`x` in `x = ...`) get a distinct highlight from other
-variable references, macro calls (`@assert`, `@inbounds`, ...) get their own highlight
-distinct from regular function calls, and string interpolation (`$x`/`$(expr)` inside
-strings) gets its own highlight standing out from the surrounding string text.
+Automatic. Extends (not replaces) the base Julia query with 3 captures: assignment targets
+(`x` in `x = ...`), macro calls (`@assert`, ...), and string interpolation (`$x`/`$(expr)`).
 
 ## Syntax & Indentation (tree-sitter)
 
