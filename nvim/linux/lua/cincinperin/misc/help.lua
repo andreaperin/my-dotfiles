@@ -158,13 +158,24 @@ local groups = {
     },
   },
   {
+    title = "Spellcheck",
+    entries = {
+      { ":set spell / nospell", "Turn spell-check on / off (buffer-local)" },
+      { "]s / [s", "Next / previous flagged word" },
+      { "z=", "Suggestions for the word under the cursor" },
+      { "zg / zw", "Mark word as good / wrong" },
+      { "zug / zuw", "Undo a zg / zw" },
+      { ":echo spellbadword()", "Why a word is flagged: bad/rare/local/caps" },
+    },
+  },
+  {
     title = "Misc",
     entries = {
+      { "<leader>z", "Toggle soft wrap (wrap + linebreak)" },
       { "<leader>ac", "Copy file:line reference to clipboard" },
       { "<leader>xb", "Convert 2 lines into a centered box" },
       { "<leader>pv", "Open netrw at current file's directory" },
       { "q", "Close help/quickfix/notify/etc. windows" },
-      { "]s / [s (with :set spell)", "Jump to next/previous misspelled word" },
     },
   },
 }

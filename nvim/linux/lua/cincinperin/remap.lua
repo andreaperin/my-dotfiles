@@ -12,6 +12,14 @@ vim.keymap.set({ "n", "v" }, "<Down>", "gj")
 vim.keymap.set("i", "<Up>", "<C-o>gk")
 vim.keymap.set("i", "<Down>", "<C-o>gj")
 
+-- `linebreak` rides along with `wrap`: on its own, `wrap` breaks mid-word.
+vim.keymap.set("n", "<leader>z", function()
+  local on = not vim.wo.wrap
+  vim.wo.wrap = on
+  vim.wo.linebreak = on
+  vim.notify("Soft wrap " .. (on and "on" or "off"))
+end, { desc = "Toggle Soft Wrap" })
+
 vim.keymap.set("n", "[b", "<Cmd>bprevious<CR>", { desc = "Previous Buffer" })
 vim.keymap.set("n", "]b", "<Cmd>bnext<CR>", { desc = "Next Buffer" })
 vim.keymap.set("n", "<leader>bw", "<Cmd>%bd|e#|bd#<CR>", { desc = "Close All Buffers Except Current" })

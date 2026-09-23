@@ -34,6 +34,7 @@ Two files side by side: `Ctrl-w v` to split, then `<leader>e` in the new window.
 |---|---|
 | `<Esc>` (normal mode) | Clear search highlighting (in addition to leaving insert mode) |
 | `↑` / `↓` (normal, visual, insert) | Move by *visual* line (`gk`/`gj`) instead of logical line — only matters when `wrap` is on and a line spans multiple screen rows |
+| `<leader>z` | Toggle soft wrap for the current window (`wrap` + `linebreak`) — display only, no newlines inserted, like VS Code's Alt+Z. Global default is `wrap = false`; `gq`/`gqap` is the separate *hard* wrap at `textwidth = 92` |
 | `<leader>ac` | Copy `file:line` of the cursor position to the clipboard (e.g. for pasting a reference into a chat) |
 | `<C-j>` (normal, insert) | Jump to and select the next `<++>` placeholder marker |
 
@@ -64,10 +65,15 @@ dead for years.
 
 | Key | Does *(vanilla Vim, once `:set spell` is on)* |
 |---|---|
-| `]s` / `[s` | Jump to next/previous misspelled word |
+| `]s` / `[s` | Jump to next/previous flagged word |
 | `z=` | Show spelling suggestions for the word under the cursor |
-| `zg` | Mark word under cursor as a good/known word |
-| `zw` | Mark word under cursor as wrong |
+| `zg` / `zw` | Mark word under cursor as good/known or as wrong |
+| `zug` / `zuw` | Undo a `zg` / `zw` |
+| `:echo spellbadword()` | Why the word under the cursor is flagged: `bad` (not in dictionary), `rare`, `local` (another region's spelling), `caps` (capitalisation) — matching the `SpellBad`/`SpellRare`/`SpellLocal`/`SpellCap` highlight groups |
+
+With generic `en` no word is ever flagged `local`, so British and American spellings are
+both accepted. vimtex marks command names as non-spell regions, so only prose is checked
+in `.tex` files.
 
 ## Autocmds (`lua/cincinperin/autocmds.lua`)
 
