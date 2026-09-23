@@ -34,7 +34,7 @@ Two files side by side: `Ctrl-w v` to split, then `<leader>e` in the new window.
 |---|---|
 | `<Esc>` (normal mode) | Clear search highlighting (in addition to leaving insert mode) |
 | `↑` / `↓` (normal, visual, insert) | Move by *visual* line (`gk`/`gj`) instead of logical line — only matters when `wrap` is on and a line spans multiple screen rows |
-| `<leader>z` | Toggle soft wrap for the current window (`wrap` + `linebreak`) — display only, no newlines inserted, like VS Code's Alt+Z. Global default is `wrap = false`; `gq`/`gqap` is the separate *hard* wrap at `textwidth = 92` |
+| `<leader>z` | Toggle soft wrap for the window (`wrap` + `linebreak`) — display only, like VS Code's Alt+Z. Global default is off; `.tex` and `.md` have it on |
 | `<leader>ac` | Copy `file:line` of the cursor position to the clipboard (e.g. for pasting a reference into a chat) |
 | `<C-j>` (normal, insert) | Jump to and select the next `<++>` placeholder marker |
 
@@ -50,7 +50,7 @@ Two files side by side: `Ctrl-w v` to split, then `<leader>e` in the new window.
 | `list` + `listchars` | Tabs, trailing whitespace, and non-breaking spaces render as visible characters |
 | `virtualedit = block` | In visual-block mode, the cursor can move past the end of short lines |
 | `winborder = rounded` | Every floating window (LSP hover, pickers, etc.) gets a rounded border by default |
-| `textwidth = 92` / `colorcolumn = 93` | Wrap target for `gq`; the color column marks one past it |
+| `textwidth = 92` / `colorcolumn = 93` | Wrap target for `gq`; the color column marks one past it. Both off in `.tex`/`.md` |
 | `hlsearch = true` | (Changed earlier, for `hlslens`) search matches stay highlighted until cleared |
 | `spelllang = en` | Spell-checking dictionary is pre-configured and auto-downloaded on startup if missing (see Spellcheck below) — spell-check itself is still off by default, `:set spell` to turn it on |
 
@@ -318,6 +318,11 @@ Default mappings live under `<localleader>` = `\`:
 | `\le` | Show compilation errors (quickfix list) |
 | `<leader>cf` | Format with **`latexindent`** (needs `perl-yaml-tiny`/`perl-file-homedir`) |
 | (automatic) | `latexindent` also runs on every `:w` of a `.tex` file, same as Julia's Runic |
+
+**Line breaks**: one sentence per line. `after/ftplugin/tex.lua` sets `wrap`/`linebreak`/
+`breakindent` on, `textwidth = 0`, `colorcolumn` cleared, and removes `t` from
+`formatoptions` so typing never breaks a sentence. Don't `gq`. A sentence is then a line:
+`dd`/`p` to move one, `<M-j>`/`<M-k>` to slide it.
 
 **Inverse search** (Zathura → jump back to the source line in Neovim): **Ctrl+Click** in the
 PDF. No zathura config needed — vimtex passes the editor command via `zathura -x`.

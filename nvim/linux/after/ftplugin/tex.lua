@@ -1,6 +1,16 @@
 -- Don't hide LaTeX syntax behind concealed symbols (e.g. \alpha -> α, math delimiters).
 vim.opt_local.conceallevel = 0
 
+-- One sentence per line: soft wrap always on, and no hard wrapping ever. `t` is on by
+-- default for tex and would break sentences at `textwidth` while typing.
+vim.opt_local.breakindent = true
+vim.opt_local.colorcolumn = ""
+vim.opt_local.linebreak = true
+vim.opt_local.showbreak = "↳ "
+vim.opt_local.textwidth = 0
+vim.opt_local.wrap = true
+vim.opt_local.formatoptions:remove("t")
+
 -- Latexindent formatting ----------------------------------------------------------------
 
 local function latexindent_format()
