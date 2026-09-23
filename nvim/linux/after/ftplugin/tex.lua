@@ -11,6 +11,16 @@ vim.opt_local.textwidth = 0
 vim.opt_local.wrap = true
 vim.opt_local.formatoptions:remove("t")
 
+-- Parse syntax from the top of the file, not from 50 lines above the window: a lone `$`
+-- (e.g. listings' `alsoother={$}`) reads as an unclosed math zone, so colours would
+-- otherwise depend on where you scrolled from. Scheduled, since vimtex's own syntax file
+-- loads after this ftplugin and would reset the sync setting.
+vim.schedule(function()
+  if vim.bo.filetype == "tex" then
+    vim.cmd("syntax sync fromstart")
+  end
+end)
+
 -- Latexindent formatting ----------------------------------------------------------------
 
 local function latexindent_format()
