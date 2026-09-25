@@ -21,6 +21,22 @@ vim.schedule(function()
   end
 end)
 
+-- vimtex re-applies its syntax on VimtexEventInitPost, wiping anything added
+-- earlier -- so the listings rules go in behind it, deferred past its own
+-- handler for that event. The augroup is cleared so opening several .tex
+-- buffers doesn't stack duplicates.
+local group = vim.api.nvim_create_augroup("TexListingsSyntax", { clear = true })
+vim.api.nvim_create_autocmd("User", {
+  group = group,
+  pattern = "VimtexEventInitPost",
+  callback = function()
+    vim.defer_fn(function()
+      vim.cmd("source " .. vim.fn.stdpath("config") .. "/after/syntax/tex-listings.vim")
+      vim.cmd("syntax sync fromstart")
+    end, 0)
+  end,
+})
+
 -- Latexindent formatting ----------------------------------------------------------------
 
 local function latexindent_format()
