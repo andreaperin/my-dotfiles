@@ -61,8 +61,6 @@ spawn-at-startup "keepassxc" "--minimized"
 
 // Avoid client-side-decorations
 prefer-no-csd
-// This line starts waybar, a commonly used bar for Wayland compositors.
-spawn-at-startup "waybar"
 // Screenshot default path
 screenshot-path "~/Pictures/Screenshots/Screenshot from %Y-%m-%d %H-%M-%S.png"
 // Disable the hot corners.
