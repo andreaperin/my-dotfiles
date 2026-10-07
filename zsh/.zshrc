@@ -51,6 +51,9 @@ alias lsa='ls -lah'
 alias l='ls -lah'
 alias ll='ls -lh'
 alias la='ls -lAh'
+# world-writable dirs (e.g. CIFS/NAS mounts): plain bold blue instead of blue-on-green
+export LS_COLORS="$LS_COLORS:ow=1;34:tw=1;34"
+
 # Load external aliases
 if [ -f ~/.config/zsh/.zsh_aliases ]; then
     source ~/.config/zsh/.zsh_aliases
