@@ -40,6 +40,7 @@ that platform at once, not per-app like Linux) and needs Python on `PATH`:
     - [Git tooling (Neovim)](#git-tooling-neovim)
     - [Fonts (Neovim)](#fonts-neovim)
   - [Claude Code tooling](#claude-code-tooling)
+  - [niri projection menu](#niri-projection-menu)
   - [Recommended Modules](#recommended-modules)
   - [Personal Notes (Author)](#personal-notes-author)
 
@@ -276,6 +277,24 @@ works; the terminal emulator has to be set to use it.
 Needs Python 3 and `~/.local/bin` on `PATH` (added by the SolusOS system profile, not by
 `zsh/.zsh_paths`). The manifest sets `force: true` because the destination is normally a
 real file, which dotbot won't overwrite otherwise.
+
+## niri projection menu
+
+`niri_laptop.conf.yaml` also links `niri/display-menu` into `~/.local/bin`.
+`Super+P` opens it (extend left/right, laptop only, display settings, reset);
+`Super+Shift+Ctrl+P` resets the displays to the config. Changes are temporary.
+
+```bash
+sudo eopkg install fuzzel wdisplays
+```
+
+For PDF talks (presenter view + timer + pointer), install `pympress` in a venv:
+
+```bash
+python3 -m venv --system-site-packages ~/.local/share/pympress
+~/.local/share/pympress/bin/pip install pympress
+ln -s ~/.local/share/pympress/bin/pympress ~/.local/bin/pympress
+```
 
 ## Recommended Modules
 ### Dashboard

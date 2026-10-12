@@ -1,0 +1,118 @@
+#!/usr/bin/env python3
+"""Projection menu for niri (like Super+P on KDE/Windows).
+
+Uses fuzzel as the menu and `niri msg output` for the changes. The changes are temporary:
+"Reset" (or a niri config reload) goes back to what ~/.config/niri/config.kdl says.
+Run with an action name to skip the menu, e.g. `display-menu laptop-only`.
+"""
+import json, os, shutil, subprocess, sys, time
+
+LAPTOP = "eDP-1"
+ACTIONS = {
+    "extend-right":  "→  Extend: projector RIGHT",
+    "extend-left":   "←  Extend: projector LEFT",
+    "laptop-only":   "▭  Laptop only (projector off)",
+    "settings":      "⚙  Display settings… (wdisplays)",
+    "reset":         "↺  Reset to config (undo all of the above)",
+}
+
+
+def run(*cmd):
+    return subprocess.run(cmd, capture_output=True, text=True)
+
+
+def notify(msg):
+    if shutil.which("notify-send"):
+        run("notify-send", "-a", "Display", "Display", msg)
+    print(msg)
+
+
+def menu(options, prompt):
+    """Show a fuzzel menu; returns the index of the chosen option, or None if cancelled."""
+    r = subprocess.run(["fuzzel", "--dmenu", "--index", "--prompt", prompt, "--width", "45",
+                        "--lines", str(len(options))],
+                       input="\n".join(options), capture_output=True, text=True)
+    log(f"fuzzel rc={r.returncode} out={r.stdout.strip()!r} err={r.stderr.strip()[:200]!r}")
+    try:
+        i = int(r.stdout.strip())
+        return i if 0 <= i < len(options) else None
+    except ValueError:
+        return None
+
+
+def log(msg):
+    try:
+        with open(os.path.expanduser("~/.cache/display-menu.log"), "a") as f:
+            f.write(f"{time.strftime('%F %T')} {msg}\n")
+    except OSError:
+        pass
+
+
+def outputs():
+    return json.loads(run("niri", "msg", "--json", "outputs").stdout)
+
+
+def pick_external(outs):
+    ext = [n for n in outs if n != LAPTOP]
+    if not ext:
+        notify("No external monitor/projector detected. Check the cable/adapter.")
+        sys.exit(1)
+    if len(ext) == 1:
+        return ext[0]
+    i = menu([f"{n}  ({outs[n]['make']} {outs[n]['model']})" for n in ext], "Which screen? ")
+    return ext[i] if i is not None else sys.exit(0)
+
+
+def size(outs, name):
+    """Logical size of an output (falls back to its preferred mode if it's currently off)."""
+    o = outs[name]
+    if o.get("logical"):
+        return o["logical"]["width"], o["logical"]["height"]
+    modes = o["modes"]
+    m = next((m for m in modes if m.get("is_preferred")), modes[0])
+    return m["width"], m["height"]
+
+
+def niri_out(name, *args):
+    r = run("niri", "msg", "output", name, *args)
+    if r.returncode:
+        notify(f"niri: {r.stderr.strip()}")
+
+
+def main():
+    action = sys.argv[1] if len(sys.argv) > 1 else None
+    if not action:
+        i = menu(list(ACTIONS.values()), "Display: ")
+        if i is None:
+            return
+        action = list(ACTIONS)[i]
+    log(f"action={action}")
+    if action == "settings":
+        subprocess.Popen(["wdisplays"], start_new_session=True)
+        return
+    if action == "reset":
+        run("niri", "msg", "action", "load-config-file")
+        for n in outputs():
+            niri_out(n, "on")
+        notify("Display layout reset to config.")
+        return
+
+    outs = outputs()
+    ext = pick_external(outs)
+    if action in ("extend-right", "extend-left"):
+        niri_out(LAPTOP, "on"); niri_out(ext, "on")
+        lw, _ = size(outs, LAPTOP)
+        ew, _ = size(outs, ext)
+        niri_out(LAPTOP, "position", "set", "--", "0", "0")
+        niri_out(ext, "position", "set", "--", str(lw if action == "extend-right" else -ew), "0")
+        side = "right" if action == "extend-right" else "left"
+        notify(f"Extended: {ext} is {side} of the laptop. Move a window there with Super+Shift+Ctrl+{'→' if side == 'right' else '←'}.")
+    elif action == "laptop-only":
+        niri_out(LAPTOP, "on"); niri_out(ext, "off")
+        notify("Laptop only.")
+    else:
+        sys.exit(f"Unknown action {action}. Choose from: {', '.join(ACTIONS)}")
+
+
+if __name__ == "__main__":
+    main()

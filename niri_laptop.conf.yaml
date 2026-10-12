@@ -6,3 +6,7 @@
 
 - link:
     ~/.config/niri/config.kdl: niri/config_laptop.kdl
+    ~/.local/bin/display-menu:
+      path: niri/display-menu
+      create: true
+      force: true

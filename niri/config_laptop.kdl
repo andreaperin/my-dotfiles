@@ -265,6 +265,8 @@ binds {
     Ctrl+Alt+Delete { quit; }
 
     Mod+Shift+P { power-off-monitors; }
+    Mod+P hotkey-overlay-title="Projection menu" { spawn-sh "~/.local/bin/display-menu"; }
+    Mod+Shift+Ctrl+P hotkey-overlay-title="Reset displays to config" { spawn-sh "~/.local/bin/display-menu reset"; }
     Mod+Alt+S hotkey-overlay-title="Lock and Suspend: noctalia" { spawn-sh "noctalia msg session lock-and-suspend"; }
 
     // Actions to switch layouts.
