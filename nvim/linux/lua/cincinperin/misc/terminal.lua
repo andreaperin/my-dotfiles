@@ -177,7 +177,10 @@ function M.send_to_right_term(text)
     return
   end
 
-  vim.fn.chansend(rt.jobid, text)
+  -- Wrap in bracketed paste. Without the markers a REPL treats the text as individually
+  -- typed lines: Julia's REPL auto-closes brackets, so a line ending in an opening bracket
+  -- gets completed and executed on its own, orphaning the rest of the block.
+  vim.fn.chansend(rt.jobid, "\27[200~" .. text .. "\27[201~")
 
   if rt.win and vim.api.nvim_win_is_valid(rt.win) then
     vim.api.nvim_win_set_cursor(rt.win, { vim.api.nvim_buf_line_count(rt.buf), 0 })
