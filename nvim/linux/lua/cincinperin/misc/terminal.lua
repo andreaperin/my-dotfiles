@@ -94,10 +94,16 @@ end
 -- Build a toggle function for a split-window terminal (as opposed to the floating one
 -- above): opens `split_cmd` the first time, reuses the same buffer/job on repeat toggles,
 -- hides (not wipes) the window when toggled while open. `state` is one of the `M.*_term`
--- tables above, keeping each terminal's buf/win/jobid independent.
-local function make_split_terminal_toggle(state, split_cmd)
+-- tables above, keeping each terminal's buf/win/jobid independent. `dim` ("width" or
+-- "height") is the size that is remembered across toggles, so a resized terminal reopens
+-- at the size it was hidden with.
+local function make_split_terminal_toggle(state, split_cmd, dim)
+  local get_size = dim == "width" and vim.api.nvim_win_get_width or vim.api.nvim_win_get_height
+  local set_size = dim == "width" and vim.api.nvim_win_set_width or vim.api.nvim_win_set_height
+
   return function()
     if state.win and vim.api.nvim_win_is_valid(state.win) then
+      state.size = get_size(state.win)
       vim.api.nvim_win_hide(state.win)
       return
     end
@@ -111,6 +117,9 @@ local function make_split_terminal_toggle(state, split_cmd)
     state.win = vim.api.nvim_get_current_win()
     vim.api.nvim_win_set_buf(state.win, state.buf)
     vim.wo[state.win].cursorline = false
+    if state.size then
+      set_size(state.win, state.size)
+    end
 
     if is_new then
       state.jobid = vim.fn.jobstart(terminal_shell, {
@@ -121,6 +130,15 @@ local function make_split_terminal_toggle(state, split_cmd)
 
       for _, dir in ipairs({ "h", "j", "k", "l" }) do
         vim.keymap.set("t", "<C-w>" .. dir, "<C-\\><C-n><C-w>" .. dir, { buffer = state.buf, silent = true })
+      end
+
+      -- Resize in steps of 5 without leaving terminal mode: <C-w>< / <C-w>> narrower/wider,
+      -- <C-w>- / <C-w>+ lower/higher (in normal mode the built-in <C-w> keys work as usual).
+      for key, cmd in pairs({
+        ["<"] = "vertical resize -5", [">"] = "vertical resize +5",
+        ["-"] = "resize -5", ["+"] = "resize +5",
+      }) do
+        vim.keymap.set("t", "<C-w>" .. key, "<Cmd>" .. cmd .. "<CR>", { buffer = state.buf, silent = true })
       end
 
       map_double_esc(state.buf, function() return state.jobid end)
@@ -148,8 +166,8 @@ local function make_split_terminal_toggle(state, split_cmd)
   end
 end
 
-local toggle_right_terminal = make_split_terminal_toggle(M.right_term, "botright 80vsplit")
-local toggle_bottom_terminal = make_split_terminal_toggle(M.bottom_term, "botright 15split")
+local toggle_right_terminal = make_split_terminal_toggle(M.right_term, "botright 80vsplit", "width")
+local toggle_bottom_terminal = make_split_terminal_toggle(M.bottom_term, "botright 15split", "height")
 
 local function buffer_text()
   local lines = vim.api.nvim_buf_get_lines(0, 0, -1, false)

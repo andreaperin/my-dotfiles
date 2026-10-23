@@ -40,7 +40,9 @@ end
 --- Reads from `Pmenu` rather than `Normal`/`NormalFloat`, since this config intentionally
 --- sets those to a transparent background (bg=none, see `ColorMyPencils`) for terminal
 --- transparency in the main editor -- `Pmenu` stays a real solid color in every installed
---- colorscheme, giving the tinting math something to actually derive from. This only affects
+--- colorscheme, giving the tinting math something to actually derive from. For dark themes
+--- `StatusLine` is used instead when it is darker: in kanagawa `Pmenu` is the same blue as
+--- `Visual`, which made lazygit's selected line and headers invisible. This only affects
 --- windows opened through this module (terminal, lazygit); other floats (mini.pick,
 --- mini.files, LSP hover, ...) are untouched and remain transparent.
 function M.update_bg()
@@ -50,12 +52,24 @@ function M.update_bg()
     return
   end
 
+  local function luminance(c)
+    local r = bit.rshift(bit.band(c, 0xFF0000), 16)
+    local g = bit.rshift(bit.band(c, 0x00FF00), 8)
+    local b = bit.band(c, 0x0000FF)
+    return 0.299 * r + 0.587 * g + 0.114 * b
+  end
+
+  -- The perceived luminance decides whether the theme is light or dark.
+  local is_light = luminance(bg) >= 128
+  local statusline_bg = vim.api.nvim_get_hl(0, { name = "StatusLine", link = false }).bg
+
+  if not is_light and statusline_bg and luminance(statusline_bg) < luminance(bg) then
+    bg = statusline_bg
+  end
+
   local r = bit.rshift(bit.band(bg, 0xFF0000), 16)
   local g = bit.rshift(bit.band(bg, 0x00FF00), 8)
   local b = bit.band(bg, 0x0000FF)
-
-  -- The perceived luminance decides whether the theme is light or dark.
-  local is_light = (0.299 * r + 0.587 * g + 0.114 * b) >= 128
   local dr, dg, db = 4, 4, 4
 
   if is_light then
