@@ -90,4 +90,8 @@ source <(fzf --zsh)
 
 # fzf default-like style with reverse layout and preview
 # Open in tmux popup if on tmux, otherwise use --height mode
-export FZF_DEFAULT_OPTS='--height 40% --tmux bottom,40% --layout reverse --border top --style default --preview 'fzf.preview.sh{}''
+export FZF_DEFAULT_OPTS="--height 40% --tmux bottom,40% --layout reverse --border top --style default"
+export FZF_CTRL_T_OPTS="--preview 'cat {}'"
+
+# machine-specific settings (not in the repo)
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

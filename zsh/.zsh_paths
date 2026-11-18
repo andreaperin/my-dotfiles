@@ -1,1 +1,4 @@
 # custom file to load OS specific Paths
+typeset -U path
+path=("$HOME/.local/bin" $path)
+export PATH

@@ -13,7 +13,7 @@ if [ -f /etc/os-release ]; then
             }
         ;;
 
-        'Ubuntu')
+        'Ubuntu'|'Debian GNU/Linux')
             alias update='sudo apt update; sudo apt upgrade'
             install() {
                 eval 'sudo apt install ${1}'
