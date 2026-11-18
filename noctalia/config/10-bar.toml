@@ -14,7 +14,7 @@ margin_ends = 20
     enabled = true
     accordion = false
     accordion_direction = "end"
-    fill = "surface_variant"
+    fill = "surface_container"
     opacity = 1.0
     padding = 6.0
 
@@ -24,7 +24,7 @@ margin_ends = 20
     enabled = true
     accordion = false
     accordion_direction = "end"
-    fill = "surface_variant"
+    fill = "surface_container"
     opacity = 1.0
     padding = 6.0
 
